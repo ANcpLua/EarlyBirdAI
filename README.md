@@ -64,7 +64,7 @@ See [**ARCHITECTURE.md**](docs/ARCHITECTURE.md) for component descriptions:
 
 ### Tools
 - **main.py** - Bootstrap stability-based clustering experiment
-- **load_qdrant.py** - Load clustered data into Qdrant vector database
+- **qdrant_ingest.py** - Load clustered data into Qdrant vector database
 
 ---
 
