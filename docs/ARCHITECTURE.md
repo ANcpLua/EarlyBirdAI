@@ -1,10 +1,5 @@
 # EarlyBird System Architecture
 
-**11 components** derived from semantic clustering of 44 requirements
-
-**Why 11 clusters?** See **RESULTS.md** for the complete comparison table (k=3 to k=15).
-Silhouette score peaked at k=11 (0.306), indicating optimal cluster quality.
-
 ---
 
 ## Cluster 0: Order Assembly
