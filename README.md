@@ -84,9 +84,14 @@ python3 main.py
 ### 2. Load into Qdrant
 
 ```bash
-# Load clustered requirements into Qdrant vector database
+# Start Qdrant with Docker
+docker run -p 6333:6333 qdrant/qdrant
+
+# In another terminal: Load clustered requirements into Qdrant
 python3 load_qdrant.py
 ```
+
+**Prerequisites:** Docker installed and running
 
 **Input:** [results/qdrant_clusters.json](results/qdrant_clusters.json) - Requirements grouped by cluster (k=11, d=16)
 
