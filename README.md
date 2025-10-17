@@ -12,10 +12,10 @@ Feed embeddings of [functional requirements](data/earlybird_requirements.json) i
 
 ## Approach
 
-1. **Embeddings:** all-mpnet-base-v2 (768D → PCA to 16D)
-2. **Vector Database:** Qdrant (HNSW, cosine distance)
-3. **Clustering:** Spherical k-means
-4. **Selection:** Maximize Silhouette score (peaks at k=11)
+1. **Embeddings:** [all-mpnet-base-v2](https://huggingface.co/sentence-transformers/all-mpnet-base-v2) (768D → [PCA](https://en.wikipedia.org/wiki/Principal_component_analysis) to 16D)
+2. **Vector Database:** [Qdrant](https://qdrant.tech/) ([HNSW](https://en.wikipedia.org/wiki/Hierarchical_navigable_small_world), [cosine distance](https://en.wikipedia.org/wiki/Cosine_similarity))
+3. **Clustering:** [Spherical k-means](https://en.wikipedia.org/wiki/K-means_clustering#Spherical_k-means_clustering)
+4. **Selection:** Maximize [Silhouette score](https://en.wikipedia.org/wiki/Silhouette_(clustering)) (peaks at k=11)
 
 ---
 
@@ -23,9 +23,9 @@ Feed embeddings of [functional requirements](data/earlybird_requirements.json) i
 
 **11 clusters** (Cluster 0-10) for [44 requirements](data/earlybird_requirements.json) (~4 per cluster)
 
-- **Silhouette Score:** 0.306 (peak at k=11)
-- **PCA Dimensions:** 16D (76.1% variance retained)
-- **Distance Metric:** Cosine
+- **[Silhouette Score](https://en.wikipedia.org/wiki/Silhouette_(clustering)):** 0.306 (peak at k=11)
+- **[PCA](https://en.wikipedia.org/wiki/Principal_component_analysis) Dimensions:** 16D (76.1% variance retained)
+- **Distance Metric:** [Cosine](https://en.wikipedia.org/wiki/Cosine_similarity)
 
 See [full bootstrap analysis results](results/experiment_results.csv) for all 52 configurations tested.
 
