@@ -1,5 +1,5 @@
 {
-  "Operations & Fulfillment": [
+  "Order Assembly": [
     {
       "req_id": "R18",
       "text": "A packing clerk looks at each order, assembles the ordered products and puts them into a paper bag.",
@@ -26,7 +26,7 @@
       "cluster_id": 0
     }
   ],
-  "SMS Channel": [
+  "SMS Ordering": [
     {
       "req_id": "R37",
       "text": "In the future, customers can also order by text messages (SMS). In this case they send a defined string to our company number 384 29 734. The string looks like this: C 2339110045 W mypswd P EGG 1 P TOAST 2 P OJUICE 1. This represents an order of the customer with the customer number 2339110045 having the password mypswd. The order is for one egg, two toasts and one glass of orange juice.",
@@ -53,7 +53,7 @@
       "cluster_id": 1
     }
   ],
-  "Shopping Cart": [
+  "Repeat Orders": [
     {
       "req_id": "R13",
       "text": "The customer can also decide to simply place a follow-up-order by naming one of her previous orders, which serves as a blueprint for the new order.",
@@ -129,7 +129,7 @@
       "cluster_id": 4
     }
   ],
-  "Delivery Management": [
+  "Route Planning": [
     {
       "req_id": "R24",
       "text": "The delivery clerk calculates the optimal itinerary, often using an ordinary spreadsheet. This is important as many orders may be fulfilled within one itinerary.",
@@ -146,7 +146,7 @@
       "cluster_id": 5
     }
   ],
-  "Platform Integration": [
+  "System Integrations": [
     {
       "req_id": "R33",
       "text": "The application is supposed to support the following browsers in the following versions: (specific versions to be defined).",
@@ -163,7 +163,7 @@
       "cluster_id": 6
     }
   ],
-  "Billing & Documentation": [
+  "Invoicing": [
     {
       "req_id": "R21",
       "text": "The packing clerk prints an invoice twice with the text processing system.",
@@ -185,7 +185,7 @@
       "cluster_id": 7
     }
   ],
-  "Access Control": [
+  "User Access": [
     {
       "req_id": "R10",
       "text": "There are no collective orders of several customers.",
@@ -197,7 +197,7 @@
       "cluster_id": 8
     }
   ],
-  "Product Search & Authentication": [
+  "Product Search": [
     {
       "req_id": "R11",
       "text": "After the phone clerk has authenticated the customer (which includes checking that he is not blacklisted e.g. due to bad payment morale) the customer names one or several products to be added to the shopping cart.",
@@ -219,7 +219,7 @@
       "cluster_id": 9
     }
   ],
-  "Customer Interaction": [
+  "Customer Service": [
     {
       "req_id": "R17",
       "text": "For each customer, only one address is predefined. Therefore, there is no need to specify a delivery address when ordering. The process ends by the phone clerk informing the customer about the order number, which is an eight-digit number with a checksum.",

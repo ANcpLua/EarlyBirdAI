@@ -7,7 +7,7 @@ Silhouette score peaked at k=11 (0.306), indicating optimal cluster quality.
 
 ---
 
-## Cluster 0: Order Fulfillment
+## Cluster 0: Order Assembly
 
 - Order assembly (packing clerk workflow)
 - Label printing and attachment
@@ -16,7 +16,7 @@ Silhouette score peaked at k=11 (0.306), indicating optimal cluster quality.
 
 ---
 
-## Cluster 1: SMS Channel
+## Cluster 1: SMS Ordering
 
 - Customer number validation (area code + digits + checksum)
 - SMS order parsing
@@ -25,7 +25,7 @@ Silhouette score peaked at k=11 (0.306), indicating optimal cluster quality.
 
 ---
 
-## Cluster 2: Shopping Cart
+## Cluster 2: Repeat Orders
 
 - Shopping cart assembly (prepackaged + simple products)
 - Follow-up orders using previous order as blueprint
@@ -51,7 +51,7 @@ Silhouette score peaked at k=11 (0.306), indicating optimal cluster quality.
 
 ---
 
-## Cluster 5: Delivery Management
+## Cluster 5: Route Planning
 
 - Optimal itinerary calculation
 - Multi-order delivery routing
@@ -59,7 +59,7 @@ Silhouette score peaked at k=11 (0.306), indicating optimal cluster quality.
 
 ---
 
-## Cluster 6: Platform Integration
+## Cluster 6: System Integrations
 
 - Browser compatibility
 - Browser-based delivery confirmation (smartphone + password)
@@ -67,7 +67,7 @@ Silhouette score peaked at k=11 (0.306), indicating optimal cluster quality.
 
 ---
 
-## Cluster 7: Invoice Management
+## Cluster 7: Invoicing
 
 - Invoice generation (2 copies, unique numbers)
 - Invoice content (label data + products + prices + total)
@@ -75,7 +75,7 @@ Silhouette score peaked at k=11 (0.306), indicating optimal cluster quality.
 
 ---
 
-## Cluster 8: Access Control
+## Cluster 8: User Access
 
 - User group management (customers, clerks, managers)
 - No collective orders enforcement
@@ -91,7 +91,7 @@ Silhouette score peaked at k=11 (0.306), indicating optimal cluster quality.
 
 ---
 
-## Cluster 10: Customer Interaction
+## Cluster 10: Customer Service
 
 - Phone-based order placement
 - Customer number input

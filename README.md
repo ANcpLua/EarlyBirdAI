@@ -35,17 +35,17 @@ See [full bootstrap analysis results](results/experiment_results.csv) for all 52
 
 See [**ARCHITECTURE.md**](docs/ARCHITECTURE.md) for component descriptions:
 
-- Cluster 0: Order Fulfillment
-- Cluster 1: SMS Channel
-- Cluster 2: Shopping Cart
+- Cluster 0: Order Assembly
+- Cluster 1: SMS Ordering
+- Cluster 2: Repeat Orders
 - Cluster 3: Order Cancellation
 - Cluster 4: Product Catalog
-- Cluster 5: Delivery Management
-- Cluster 6: Platform Integration
-- Cluster 7: Invoice Management
-- Cluster 8: Access Control
+- Cluster 5: Route Planning
+- Cluster 6: System Integrations
+- Cluster 7: Invoicing
+- Cluster 8: User Access
 - Cluster 9: Product Search
-- Cluster 10: Customer Interaction
+- Cluster 10: Customer Service
 
 ---
 

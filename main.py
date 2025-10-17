@@ -105,7 +105,7 @@ def spherical_kmeans(embeddings: np.ndarray, k: int, random_state: int = RANDOM_
     Returns:
         Cluster labels (n_samples,)
     """
-    # Verify normalization
+    # Verify nomalization
     norms = np.linalg.norm(embeddings, axis=1)
     assert np.allclose(norms, 1.0, atol=1e-6), "Embeddings must be L2-normalized"
 
@@ -476,7 +476,6 @@ def select_global_best(all_results: Dict[int, Dict[str, Any]], thresholds: Dict[
             }
             all_configs.append(config)
 
-    # Find best configuration: maximize Silhouette
     passing_configs = [c for c in all_configs if c['passes']]
     if passing_configs:
         best = max(passing_configs, key=lambda x: x['silhouette'])
