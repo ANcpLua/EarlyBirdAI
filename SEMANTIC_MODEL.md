@@ -74,19 +74,29 @@ skill markdown
 For each skill, extract core axes such as:
 
 ```text
-architecture_review
-complexity_deletion
+structural_simplification
+code_judo_deletion
 spaghetti_detection
 file_size_boundary
+abstraction_quality
 type_boundary_cleanliness
 canonical_layer_ownership
 orchestration_atomicity
 output_prioritization
-approval_bar
 tone_enforcement
+approval_bar
+maintainability_regression_blocking
+unnecessary_abstraction_rejection
+generic_linting_rejection
+evidence_grounding
+ambitious_review_scope
 ```
 
 The extracted axes become the semantic target space.
+
+The local validation path uses deterministic TF-IDF vectors as the embedding backend so the plugin can be tested without
+external API credentials or a vector database. A production embedding backend can replace that layer without changing the
+God Team output schema.
 
 ## Candidate God Profile
 
@@ -100,9 +110,10 @@ Example:
   "pantheon": "Hindu",
   "domains": ["destruction", "transformation", "renewal", "cosmic dissolution"],
   "workflow_affinity": ["delete complexity", "remove obsolete structure", "break false stability"],
-  "mythic_power": 0.98,
-  "name_usability": 0.90,
-  "notes": "Strong fit for destructive cleanup and renewal-oriented refactoring."
+  "mythic_power_score": 0.98,
+  "name_usability_score": 0.90,
+  "role_hint": "complexity deletion",
+  "evidence_notes": "Hindu deity associated with destruction and transformation, fitting renewal through deletion."
 }
 ```
 
@@ -113,7 +124,7 @@ Each candidate god receives:
 ```text
 semantic_fit_score
 mythic_power_score
-coverage_score
+workflow_coverage_score
 non_overlap_score
 name_usability_score
 evidence_score
@@ -124,7 +135,7 @@ Final score:
 ```text
 final_score =
   0.40 * semantic_fit_score
-+ 0.20 * coverage_score
++ 0.20 * workflow_coverage_score
 + 0.15 * non_overlap_score
 + 0.15 * mythic_power_score
 + 0.05 * name_usability_score
@@ -136,7 +147,7 @@ final_score =
 Test team sizes:
 
 ```text
-k = 3..12
+k = 4..16
 ```
 
 For each `k`, compute:
@@ -193,24 +204,30 @@ visualizations/god_team_tsne.png
 {
   "plugin": "gods",
   "skill": "thermo-nuclear-code-quality-review",
-  "selected_command": "/gods:review",
+  "skill_name": "thermo-nuclear-code-quality-review",
+  "command": "/gods:review",
   "optimal_team_size": 7,
+  "selected_gods": ["Athena"],
   "selection_reason": "Smallest team with strong coverage, high role separation, and low overlap.",
   "team": [
     {
       "god": "Athena",
       "role": "strategic architecture judgment",
       "semantic_fit_score": 0.0,
-      "mythic_power_score": 0.0,
-      "coverage_score": 0.0,
+      "workflow_coverage_score": 0.0,
       "non_overlap_score": 0.0,
+      "mythic_power_score": 0.0,
       "name_usability_score": 0.0,
+      "evidence_score": 0.0,
       "final_score": 0.0,
       "assigned_axes": [],
-      "evidence": []
+      "evidence_notes": []
     }
   ],
+  "role_assignments": {},
+  "score_breakdowns": {},
   "rejected_team_sizes": [],
+  "blocked_validations": [],
   "notes": []
 }
 ```
@@ -263,7 +280,7 @@ A valid run must answer:
 
 ## Current Best Hypothesis For The Thermo-Nuclear Review Skill
 
-For the thermo-nuclear review skill, test `k=3..12`; the initial expected winner is probably 7 gods, not 5 or 9.
+For the thermo-nuclear review skill, test `k=4..16`; the initial expected winner is probably 7 gods, not 5 or 9.
 
 Why 7?
 
@@ -272,7 +289,7 @@ Why 7?
 5 gods = workable, but likely merges architecture/type/orchestration too much
 7 gods = probably best balance
 9 gods = expressive, but likely redundant
-12 gods = too much overhead for one skill
+16 gods = too much overhead for one skill unless every role reduces ambiguity
 ```
 
 Initial 7-god hypothesis:

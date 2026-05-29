@@ -6,22 +6,10 @@
     "keywords": ["structural", "simplification", "simple", "fewer", "direct", "shape"]
   },
   {
-    "id": "code_judo",
-    "label": "Code-judo leverage",
-    "description": "Find small high-leverage changes that redirect the problem instead of adding force, ceremony, or broad rewrites.",
-    "keywords": ["code-judo", "judo", "leverage", "small", "redirect", "ceremony"]
-  },
-  {
-    "id": "architecture_review",
-    "label": "Architecture review",
-    "description": "Judge strategic structure, design quality, coupling, cohesion, abstraction boundaries, and whether the system shape fits the task.",
-    "keywords": ["architecture", "structure", "design", "strategy", "coupling", "cohesion", "abstraction"]
-  },
-  {
-    "id": "complexity_deletion",
-    "label": "Complexity deletion",
-    "description": "Remove accidental complexity, dead abstractions, redundant layers, compatibility shims, and code that survives only from inertia.",
-    "keywords": ["delete", "remove", "complexity", "dead", "redundant", "judo", "simplify"]
+    "id": "code_judo_deletion",
+    "label": "Code-judo deletion",
+    "description": "Find small high-leverage deletions that redirect the problem instead of adding force, ceremony, broad rewrites, or compatibility shims.",
+    "keywords": ["code-judo", "judo", "leverage", "delete", "remove", "redirect", "ceremony"]
   },
   {
     "id": "spaghetti_detection",
@@ -34,6 +22,12 @@
     "label": "File-size boundary",
     "description": "Notice files or modules that have grown too large, lost locality, or mixed unrelated responsibilities.",
     "keywords": ["file", "module", "large", "boundary", "responsibility", "locality"]
+  },
+  {
+    "id": "abstraction_quality",
+    "label": "Abstraction quality",
+    "description": "Judge whether abstractions reduce real complexity or merely hide it behind indirection, clever names, or generic surfaces.",
+    "keywords": ["abstraction", "quality", "indirection", "generic", "clever", "surface"]
   },
   {
     "id": "type_boundary_cleanliness",
@@ -70,5 +64,35 @@
     "label": "Tone enforcement",
     "description": "Keep review language direct, useful, non-performative, and aligned with the workflow's expected communication style.",
     "keywords": ["tone", "language", "direct", "communication", "style", "non-performative"]
+  },
+  {
+    "id": "maintainability_regression_blocking",
+    "label": "Maintainability regression blocking",
+    "description": "Block changes that make the code harder to evolve, reason about, review, or safely modify later.",
+    "keywords": ["maintainability", "regression", "block", "evolve", "reason", "modify"]
+  },
+  {
+    "id": "unnecessary_abstraction_rejection",
+    "label": "Unnecessary abstraction rejection",
+    "description": "Reject duplicate layers, decorative interfaces, speculative extension points, and clever abstractions without concrete pressure.",
+    "keywords": ["unnecessary", "abstraction", "duplicate", "decorative", "speculative", "extension"]
+  },
+  {
+    "id": "generic_linting_rejection",
+    "label": "Generic linting rejection",
+    "description": "Keep the review focused on structural risk and avoid substituting style nits or generic lint output for code-quality judgment.",
+    "keywords": ["generic", "linting", "style", "nit", "structural", "risk"]
+  },
+  {
+    "id": "evidence_grounding",
+    "label": "Evidence grounding",
+    "description": "Require concrete code evidence, precise failure modes, and explicit uncertainty instead of unsupported claims.",
+    "keywords": ["evidence", "concrete", "failure", "unsupported", "claims", "uncertainty"]
+  },
+  {
+    "id": "ambitious_review_scope",
+    "label": "Ambitious review scope",
+    "description": "Look beyond local edits when the root cause lives in architecture, workflow ownership, generated inputs, or system shape.",
+    "keywords": ["ambitious", "scope", "root cause", "architecture", "workflow", "system"]
   }
 ]

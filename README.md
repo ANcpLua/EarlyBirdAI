@@ -9,7 +9,7 @@ This repository is a Claude Code plugin named `gods`. The primary command is:
 ```
 
 The plugin does not hard-code a pantheon. It reads a skill or workflow prompt, extracts review axes, embeds those axes
-with candidate deity profiles, searches team sizes `k=3..12`, and writes the smallest powerful team that covers the
+with candidate deity profiles, searches team sizes `k=4..16`, and writes the smallest powerful team that covers the
 workflow without wasteful overlap.
 
 ## Commands
@@ -70,6 +70,10 @@ visualizations/god_team_tsne.png
 
 `results/god_team.json` contains the selected team, rejected gods, rejected team sizes, assigned workflow axes, and
 coverage/separation metrics.
+
+The JSON includes the command, selected gods, role assignments, score breakdowns, evidence notes, and any blocked
+validations. The local pipeline uses deterministic TF-IDF vectors as a dry-run embedding backend, so no external API or
+Qdrant service is required for validation.
 
 ## Model
 

@@ -2,121 +2,271 @@
   {
     "name": "Athena",
     "pantheon": "Greek",
-    "domains": ["wisdom", "strategy", "craft", "civil order", "war counsel"],
-    "workflow_affinity": ["strategic architecture judgment", "design quality", "refactor judgment", "clean structure"],
-    "mythic_power": 0.91,
-    "name_usability": 0.94,
+    "domains": ["wisdom", "strategy", "war counsel", "craft", "civil order"],
+    "workflow_affinity": ["architecture judgment", "strategic design", "abstraction quality", "refactor judgment"],
+    "mythic_power_score": 0.91,
+    "name_usability_score": 0.94,
     "role_hint": "strategic architecture judgment",
-    "notes": "Strong fit for architecture, strategy, design tradeoffs, and principled review judgment."
+    "evidence_notes": "Greek goddess strongly associated with wisdom, strategy, crafts, and disciplined judgment."
   },
   {
     "name": "Shiva",
     "pantheon": "Hindu",
     "domains": ["destruction", "transformation", "renewal", "cosmic dissolution"],
-    "workflow_affinity": ["delete complexity", "remove obsolete structure", "break false stability", "renew through simplification"],
-    "mythic_power": 0.98,
-    "name_usability": 0.90,
+    "workflow_affinity": ["delete complexity", "remove dead abstractions", "break false stability", "renew through simplification"],
+    "mythic_power_score": 0.98,
+    "name_usability_score": 0.90,
     "role_hint": "complexity deletion",
-    "notes": "Strong fit for deleting accidental complexity and dead abstractions."
+    "evidence_notes": "Hindu deity associated with destruction and transformation, fitting renewal through deletion."
   },
   {
     "name": "Hephaestus",
     "pantheon": "Greek",
-    "domains": ["craft", "forge", "engineering", "tools", "metalwork"],
-    "workflow_affinity": ["implementation structure", "maintainable construction", "concrete fixes", "toolmaking"],
-    "mythic_power": 0.87,
-    "name_usability": 0.88,
+    "domains": ["forge", "craft", "metalwork", "fire", "tools"],
+    "workflow_affinity": ["implementation craft", "maintainable construction", "concrete fixes", "toolmaking"],
+    "mythic_power_score": 0.87,
+    "name_usability_score": 0.88,
     "role_hint": "implementation craft",
-    "notes": "Strong fit for practical implementation quality and craft."
+    "evidence_notes": "Greek smith god associated with forge craft, tools, and technical construction."
   },
   {
     "name": "Ma'at",
     "pantheon": "Egyptian",
-    "domains": ["truth", "justice", "balance", "order", "evidence"],
+    "domains": ["truth", "justice", "order", "balance", "cosmic law"],
     "workflow_affinity": ["approval bar", "evidence review", "correctness", "truth maintenance", "strict judgment"],
-    "mythic_power": 0.93,
-    "name_usability": 0.86,
+    "mythic_power_score": 0.93,
+    "name_usability_score": 0.86,
     "role_hint": "truth and approval bar",
-    "notes": "Strong fit for evidence, correctness, and high approval thresholds."
+    "evidence_notes": "Egyptian concept and goddess of truth, order, and balance, fitting evidence-based approval."
+  },
+  {
+    "name": "Themis",
+    "pantheon": "Greek",
+    "domains": ["divine law", "custom", "order", "justice", "counsel"],
+    "workflow_affinity": ["approval bar", "review law", "norm enforcement", "fair judgment", "policy boundaries"],
+    "mythic_power_score": 0.86,
+    "name_usability_score": 0.87,
+    "role_hint": "review law and approval threshold",
+    "evidence_notes": "Greek Titaness associated with divine law, order, and counsel."
+  },
+  {
+    "name": "Tyr",
+    "pantheon": "Norse",
+    "domains": ["law", "justice", "oath", "war", "courage"],
+    "workflow_affinity": ["hard judgment", "blocked changes", "contract enforcement", "risk-bearing approval"],
+    "mythic_power_score": 0.84,
+    "name_usability_score": 0.82,
+    "role_hint": "lawful blocker enforcement",
+    "evidence_notes": "Norse god associated with law, justice, oaths, and courageous sacrifice."
+  },
+  {
+    "name": "Odin",
+    "pantheon": "Norse",
+    "domains": ["wisdom", "runes", "hidden knowledge", "war", "sacrifice"],
+    "workflow_affinity": ["deep investigation", "hidden causes", "non-obvious simplification", "root-cause research"],
+    "mythic_power_score": 0.95,
+    "name_usability_score": 0.91,
+    "role_hint": "deep investigation",
+    "evidence_notes": "Norse god associated with wisdom, runes, sacrifice, and seeking hidden knowledge."
   },
   {
     "name": "Hermes",
     "pantheon": "Greek",
-    "domains": ["messages", "boundaries", "travel", "routing", "translation"],
+    "domains": ["messages", "travel", "boundaries", "translation", "commerce"],
     "workflow_affinity": ["workflow routing", "orchestration clarity", "handoffs", "sequencing", "communication"],
-    "mythic_power": 0.84,
-    "name_usability": 0.92,
+    "mythic_power_score": 0.84,
+    "name_usability_score": 0.92,
     "role_hint": "routing and orchestration clarity",
-    "notes": "Strong fit for routing work, handoffs, and orchestration."
+    "evidence_notes": "Greek messenger and boundary-crossing god, fitting routing, handoffs, and communication."
   },
   {
     "name": "Janus",
     "pantheon": "Roman",
     "domains": ["doors", "thresholds", "transitions", "beginnings", "endings"],
-    "workflow_affinity": ["type boundaries", "API boundaries", "compatibility review", "migration thresholds", "module seams"],
-    "mythic_power": 0.82,
-    "name_usability": 0.89,
-    "role_hint": "boundary review",
-    "notes": "Strong fit for API, type, module, and compatibility boundaries."
-  },
-  {
-    "name": "Odin",
-    "pantheon": "Norse",
-    "domains": ["wisdom", "runes", "sacrifice", "hidden knowledge", "quests"],
-    "workflow_affinity": ["deep investigation", "hidden causes", "non-obvious simplification", "root-cause research"],
-    "mythic_power": 0.95,
-    "name_usability": 0.91,
-    "role_hint": "deep investigation",
-    "notes": "Strong fit for hidden causes and non-obvious review paths."
+    "workflow_affinity": ["type boundaries", "API boundaries", "compatibility review", "migration thresholds", "module boundaries"],
+    "mythic_power_score": 0.82,
+    "name_usability_score": 0.89,
+    "role_hint": "boundary and transition review",
+    "evidence_notes": "Roman god of doors, thresholds, and transitions, fitting boundary review."
   },
   {
     "name": "Apollo",
     "pantheon": "Greek",
-    "domains": ["light", "clarity", "music", "prophecy", "healing"],
-    "workflow_affinity": ["clarity", "diagnostic light", "readable expression", "clean communication", "tone"],
-    "mythic_power": 0.88,
-    "name_usability": 0.93,
+    "domains": ["light", "prophecy", "music", "healing", "clarity"],
+    "workflow_affinity": ["diagnostic clarity", "readable expression", "tone", "illumination", "clean communication"],
+    "mythic_power_score": 0.88,
+    "name_usability_score": 0.93,
     "role_hint": "clarity and diagnostic light",
-    "notes": "Strong fit for readability, expression, and illuminating unclear code."
+    "evidence_notes": "Greek god associated with light, prophecy, music, and healing, fitting clarity and diagnosis."
   },
   {
     "name": "Thoth",
     "pantheon": "Egyptian",
-    "domains": ["writing", "records", "measurement", "knowledge", "language"],
-    "workflow_affinity": ["documentation", "precise language", "records", "output expectations", "naming"],
-    "mythic_power": 0.86,
-    "name_usability": 0.84,
-    "role_hint": "precise records and documentation",
-    "notes": "Strong fit for documentation, output records, and naming precision."
-  },
-  {
-    "name": "Ares",
-    "pantheon": "Greek",
-    "domains": ["war", "force", "conflict", "aggression"],
-    "workflow_affinity": ["aggressive blocker enforcement", "hard stop", "risk escalation", "strict rejection"],
-    "mythic_power": 0.83,
-    "name_usability": 0.80,
-    "role_hint": "blocker enforcement",
-    "notes": "Useful when the workflow needs forceful rejection of unsafe changes."
+    "domains": ["writing", "knowledge", "measurement", "records", "language"],
+    "workflow_affinity": ["documentation", "precise records", "output expectations", "naming", "measurement"],
+    "mythic_power_score": 0.86,
+    "name_usability_score": 0.84,
+    "role_hint": "records and output precision",
+    "evidence_notes": "Egyptian god associated with writing, measurement, and knowledge."
   },
   {
     "name": "Hades",
     "pantheon": "Greek",
-    "domains": ["underworld", "hidden wealth", "dead", "buried things"],
+    "domains": ["underworld", "dead", "buried wealth", "hidden realm"],
     "workflow_affinity": ["dead-code excavation", "hidden debt", "buried coupling", "obsolete paths"],
-    "mythic_power": 0.90,
-    "name_usability": 0.85,
+    "mythic_power_score": 0.90,
+    "name_usability_score": 0.85,
     "role_hint": "hidden-debt excavation",
-    "notes": "Strong fit for dead code, hidden debt, and buried structure."
+    "evidence_notes": "Greek god of the underworld and the dead, fitting hidden debt and dead-code excavation."
+  },
+  {
+    "name": "Anubis",
+    "pantheon": "Egyptian",
+    "domains": ["mummification", "funerary rites", "dead", "weighing of the heart", "guidance"],
+    "workflow_affinity": ["post-change judgment", "dead-code handling", "risk weighing", "transition review"],
+    "mythic_power_score": 0.85,
+    "name_usability_score": 0.84,
+    "role_hint": "dead-code and risk weighing",
+    "evidence_notes": "Egyptian funerary god associated with mummification and judgment of the dead."
+  },
+  {
+    "name": "Ptah",
+    "pantheon": "Egyptian",
+    "domains": ["craftsmen", "architects", "creation", "artisans", "making"],
+    "workflow_affinity": ["system design", "craft construction", "implementation shape", "maker discipline"],
+    "mythic_power_score": 0.86,
+    "name_usability_score": 0.79,
+    "role_hint": "crafted system design",
+    "evidence_notes": "Egyptian creator and patron of craftsmen and architects."
   },
   {
     "name": "Vishvakarma",
     "pantheon": "Hindu",
-    "domains": ["architecture", "craftsmanship", "construction", "divine engineering"],
-    "workflow_affinity": ["system craftsmanship", "construction", "implementation design", "large-scale architecture"],
-    "mythic_power": 0.89,
-    "name_usability": 0.78,
+    "domains": ["divine architect", "craftsmanship", "construction", "engineering"],
+    "workflow_affinity": ["system craftsmanship", "construction quality", "architecture craft", "implementation design"],
+    "mythic_power_score": 0.89,
+    "name_usability_score": 0.78,
     "role_hint": "system craftsmanship",
-    "notes": "Strong fit for system construction and architecture craft."
+    "evidence_notes": "Hindu divine architect and craftsman, fitting large-scale system construction."
+  },
+  {
+    "name": "Saraswati",
+    "pantheon": "Hindu",
+    "domains": ["knowledge", "speech", "learning", "music", "arts"],
+    "workflow_affinity": ["clear explanation", "review language", "knowledge organization", "naming", "documentation clarity"],
+    "mythic_power_score": 0.87,
+    "name_usability_score": 0.86,
+    "role_hint": "knowledge and language clarity",
+    "evidence_notes": "Hindu goddess of knowledge, learning, music, and speech."
+  },
+  {
+    "name": "Kali",
+    "pantheon": "Hindu",
+    "domains": ["time", "destruction", "fierce protection", "transformation"],
+    "workflow_affinity": ["aggressive complexity deletion", "break unsafe patterns", "destroy regressions", "fierce cleanup"],
+    "mythic_power_score": 0.96,
+    "name_usability_score": 0.82,
+    "role_hint": "fierce deletion of regressions",
+    "evidence_notes": "Hindu goddess associated with time, fierce protection, destruction, and transformation."
+  },
+  {
+    "name": "Heimdall",
+    "pantheon": "Norse",
+    "domains": ["watchman", "guardian", "Bifrost", "vigilance", "sight"],
+    "workflow_affinity": ["boundary guard", "regression watch", "entry-point vigilance", "interface protection"],
+    "mythic_power_score": 0.84,
+    "name_usability_score": 0.83,
+    "role_hint": "boundary vigilance",
+    "evidence_notes": "Norse watchman of the gods and guardian of Bifrost, fitting vigilant boundary protection."
+  },
+  {
+    "name": "Prometheus",
+    "pantheon": "Greek",
+    "domains": ["forethought", "fire", "craft", "human benefit", "defiance"],
+    "workflow_affinity": ["high-leverage improvement", "tooling insight", "future risk", "beneficial simplification"],
+    "mythic_power_score": 0.88,
+    "name_usability_score": 0.88,
+    "role_hint": "forethought and leverage",
+    "evidence_notes": "Greek Titan associated with forethought and bringing fire to humans."
+  },
+  {
+    "name": "Ganesh",
+    "pantheon": "Hindu",
+    "domains": ["beginnings", "wisdom", "obstacle removal", "learning", "thresholds"],
+    "workflow_affinity": ["remove blockers", "unblock workflow", "entry-point review", "practical obstacle removal"],
+    "mythic_power_score": 0.90,
+    "name_usability_score": 0.90,
+    "role_hint": "obstacle removal",
+    "evidence_notes": "Hindu god widely associated with beginnings, wisdom, and removing obstacles."
+  },
+  {
+    "name": "Loki",
+    "pantheon": "Norse",
+    "domains": ["trickery", "shape-shifting", "disruption", "cunning"],
+    "workflow_affinity": ["adversarial edge cases", "clever failure modes", "deceptive abstractions", "hidden traps"],
+    "mythic_power_score": 0.84,
+    "name_usability_score": 0.81,
+    "role_hint": "adversarial trap finding",
+    "evidence_notes": "Norse trickster associated with cunning, disruption, and shape-shifting."
+  },
+  {
+    "name": "Ra",
+    "pantheon": "Egyptian",
+    "domains": ["sun", "creation", "kingship", "order", "light"],
+    "workflow_affinity": ["system-level illumination", "source-of-truth order", "central authority", "clarity"],
+    "mythic_power_score": 0.94,
+    "name_usability_score": 0.82,
+    "role_hint": "central illumination and order",
+    "evidence_notes": "Egyptian sun god associated with creation, kingship, and cosmic order."
+  },
+  {
+    "name": "Amaterasu",
+    "pantheon": "Shinto",
+    "domains": ["sun", "light", "order", "imperial lineage", "illumination"],
+    "workflow_affinity": ["illuminate hidden structure", "clarify architecture", "reveal responsibility gaps", "semantic discovery"],
+    "mythic_power_score": 0.90,
+    "name_usability_score": 0.83,
+    "role_hint": "illumination of hidden structure",
+    "evidence_notes": "Shinto sun goddess associated with light and order."
+  },
+  {
+    "name": "Minerva",
+    "pantheon": "Roman",
+    "domains": ["wisdom", "strategy", "arts", "craft", "war"],
+    "workflow_affinity": ["architecture judgment", "technical wisdom", "abstraction review", "craft strategy"],
+    "mythic_power_score": 0.88,
+    "name_usability_score": 0.89,
+    "role_hint": "technical wisdom and strategy",
+    "evidence_notes": "Roman goddess associated with wisdom, strategy, crafts, and the arts."
+  },
+  {
+    "name": "Vulcan",
+    "pantheon": "Roman",
+    "domains": ["fire", "forge", "metalworking", "craft", "volcanoes"],
+    "workflow_affinity": ["implementation forge", "tool craft", "durable construction", "concrete repair"],
+    "mythic_power_score": 0.84,
+    "name_usability_score": 0.84,
+    "role_hint": "implementation forge",
+    "evidence_notes": "Roman god of fire, forge, and metalworking."
+  },
+  {
+    "name": "Forseti",
+    "pantheon": "Norse",
+    "domains": ["justice", "reconciliation", "law", "settlement"],
+    "workflow_affinity": ["review arbitration", "approval decision", "conflict resolution", "fair blocker judgment"],
+    "mythic_power_score": 0.78,
+    "name_usability_score": 0.76,
+    "role_hint": "review arbitration",
+    "evidence_notes": "Norse god associated with justice, reconciliation, and legal settlement."
+  },
+  {
+    "name": "Ares",
+    "pantheon": "Greek",
+    "domains": ["war", "force", "conflict", "battle"],
+    "workflow_affinity": ["aggressive blocker enforcement", "hard stop", "risk escalation", "strict rejection"],
+    "mythic_power_score": 0.83,
+    "name_usability_score": 0.80,
+    "role_hint": "aggressive blocker enforcement",
+    "evidence_notes": "Greek god of war, fitting forceful escalation and blocker enforcement."
   }
 ]

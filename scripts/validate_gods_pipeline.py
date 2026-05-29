@@ -13,6 +13,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from god_team_discovery import (  # noqa: E402
+    AXES_PATH,
+    GODS_PATH,
     GOD_TEAM_PATH,
     GOD_TEAM_SCORES_PATH,
     GOD_TEAM_TSNE_PATH,
@@ -20,12 +22,66 @@ from god_team_discovery import (  # noqa: E402
     discover_god_team,
 )
 
+REQUIRED_AXES = {
+    "structural_simplification",
+    "code_judo_deletion",
+    "spaghetti_detection",
+    "file_size_boundary",
+    "abstraction_quality",
+    "type_boundary_cleanliness",
+    "canonical_layer_ownership",
+    "orchestration_atomicity",
+    "output_prioritization",
+    "tone_enforcement",
+    "approval_bar",
+}
+REQUIRED_GODS = {
+    "Athena",
+    "Shiva",
+    "Hephaestus",
+    "Ma'at",
+    "Themis",
+    "Tyr",
+    "Odin",
+    "Hermes",
+    "Janus",
+    "Apollo",
+    "Thoth",
+    "Hades",
+    "Anubis",
+    "Ptah",
+    "Vishvakarma",
+    "Saraswati",
+    "Kali",
+    "Heimdall",
+    "Prometheus",
+    "Ganesh",
+    "Loki",
+    "Ra",
+    "Amaterasu",
+    "Minerva",
+    "Vulcan",
+    "Forseti",
+    "Ares",
+}
+PROFILE_FIELDS = {
+    "name",
+    "pantheon",
+    "domains",
+    "workflow_affinity",
+    "mythic_power_score",
+    "name_usability_score",
+    "role_hint",
+    "evidence_notes",
+}
+
 
 def main() -> int:
     errors: list[str] = []
     discover_god_team(None)
 
     errors.extend(check_plugin_shape())
+    errors.extend(check_source_data())
     errors.extend(check_god_team_json())
     errors.extend(check_scores_csv())
     errors.extend(check_no_stale_fixed_pipeline())
@@ -38,7 +94,7 @@ def main() -> int:
     result = json.loads((ROOT / GOD_TEAM_PATH).read_text(encoding="utf-8"))
     print("God Team pipeline validation OK")
     print(f"Plugin: {result['plugin']}")
-    print(f"Command: {result['selected_command']}")
+    print(f"Command: {result['command']}")
     print(f"Optimal team size: {result['optimal_team_size']}")
     print("Selected gods:", ", ".join(member["god"] for member in result["team"]))
     print(f"Scores: {GOD_TEAM_SCORES_PATH}")
@@ -62,6 +118,32 @@ def check_plugin_shape() -> list[str]:
     return errors
 
 
+def check_source_data() -> list[str]:
+    errors: list[str] = []
+    axes = json.loads((ROOT / AXES_PATH).read_text(encoding="utf-8"))
+    axis_ids = {axis.get("id") for axis in axes}
+    missing_axes = REQUIRED_AXES - axis_ids
+    if missing_axes:
+        errors.append(f"workflow axes missing required IDs: {sorted(missing_axes)}")
+    if len(axes) < max(K_RANGE):
+        errors.append(f"workflow axes must support k={max(K_RANGE)}")
+
+    gods = json.loads((ROOT / GODS_PATH).read_text(encoding="utf-8"))
+    god_names = {god.get("name") for god in gods}
+    missing_gods = REQUIRED_GODS - god_names
+    if missing_gods:
+        errors.append(f"candidate corpus missing required gods: {sorted(missing_gods)}")
+    for god in gods:
+        missing_fields = PROFILE_FIELDS - set(god)
+        if missing_fields:
+            errors.append(f"{god.get('name', '<unknown>')} missing profile fields: {sorted(missing_fields)}")
+        for field in ["mythic_power_score", "name_usability_score"]:
+            value = god.get(field)
+            if not isinstance(value, (int, float)) or not 0.0 <= float(value) <= 1.0:
+                errors.append(f"{god.get('name', '<unknown>')} {field} must be a 0..1 score")
+    return errors
+
+
 def check_god_team_json() -> list[str]:
     path = ROOT / GOD_TEAM_PATH
     if not path.exists():
@@ -72,15 +154,20 @@ def check_god_team_json() -> list[str]:
     required = {
         "plugin",
         "skill",
-        "selected_command",
+        "skill_name",
+        "command",
+        "selected_gods",
         "optimal_team_size",
         "selection_reason",
         "team",
         "rejected_gods",
         "rejected_team_sizes",
+        "role_assignments",
+        "score_breakdowns",
         "axis_coverage",
         "metrics",
         "validation",
+        "blocked_validations",
         "notes",
     }
     missing = required - set(result)
@@ -88,8 +175,8 @@ def check_god_team_json() -> list[str]:
         errors.append(f"god_team.json missing keys: {sorted(missing)}")
     if result.get("plugin") != "gods":
         errors.append("god_team.json plugin must be gods")
-    if result.get("selected_command") != "/gods:review":
-        errors.append("god_team.json selected_command must be /gods:review")
+    if result.get("command") != "/gods:review":
+        errors.append("god_team.json command must be /gods:review")
 
     team = result.get("team", [])
     k = result.get("optimal_team_size")
@@ -97,24 +184,31 @@ def check_god_team_json() -> list[str]:
         errors.append(f"optimal_team_size must be in {min(K_RANGE)}..{max(K_RANGE)}")
     if isinstance(k, int) and len(team) != k:
         errors.append("team length must match optimal_team_size")
+    if isinstance(result.get("selected_gods"), list) and len(result["selected_gods"]) != len(team):
+        errors.append("selected_gods length must match team length")
 
     for member in team:
         for key in [
             "god",
             "role",
             "semantic_fit_score",
-            "mythic_power_score",
-            "coverage_score",
+            "workflow_coverage_score",
             "non_overlap_score",
+            "mythic_power_score",
             "name_usability_score",
+            "evidence_score",
             "final_score",
             "assigned_axes",
-            "evidence",
+            "evidence_notes",
         ]:
             if key not in member:
                 errors.append(f"team member missing {key}")
         if not member.get("assigned_axes"):
             errors.append(f"{member.get('god', '<unknown>')} has no assigned axes")
+    if not result.get("role_assignments"):
+        errors.append("role_assignments must not be empty")
+    if not result.get("score_breakdowns"):
+        errors.append("score_breakdowns must not be empty")
     return errors
 
 
@@ -136,7 +230,6 @@ def check_scores_csv() -> list[str]:
 
 def check_no_stale_fixed_pipeline() -> list[str]:
     stale_terms = [
-        "qdrant",
         "requirements_v1",
         "qdrant_ingest",
         "semantic_text",

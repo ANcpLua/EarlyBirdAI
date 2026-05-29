@@ -36,7 +36,7 @@ def main() -> int:
     else:
         print(
             f"Selected {result['optimal_team_size']} gods for {result['skill']} "
-            f"using {result['selected_command']}."
+            f"using {result['command']}."
         )
         print(f"Wrote {GOD_TEAM_PATH}")
         print("Team:", ", ".join(member["god"] for member in result["team"]))

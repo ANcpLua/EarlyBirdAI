@@ -16,4 +16,7 @@ python3 main.py --skill "$ARGUMENTS"
 Then read `results/god_team.json` and use the selected team as workflow forces for the review. Do not treat the gods as
 static subagents. If the selected team looks redundant, rerun with a clearer skill/task input before reviewing.
 
-Review output should lead with blocking findings, then important findings, then the selected God Team summary.
+Review output should lead with blocking structural risks, then important maintainability risks, then the selected God
+Team summary. Keep the review focused on structural simplification, code-judo deletion, spaghetti growth,
+file-size/type/canonical-layer boundaries, orchestration atomicity, unnecessary abstraction rejection, evidence, and the
+approval bar. Do not substitute generic linting or style nits for the thermo-nuclear review intent.

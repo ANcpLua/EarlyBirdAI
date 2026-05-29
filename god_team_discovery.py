@@ -39,7 +39,7 @@ VISUALIZATIONS_DIR = Path("visualizations")
 GOD_TEAM_PATH = RESULTS_DIR / "god_team.json"
 GOD_TEAM_SCORES_PATH = RESULTS_DIR / "god_team_scores.csv"
 GOD_TEAM_TSNE_PATH = VISUALIZATIONS_DIR / "god_team_tsne.png"
-K_RANGE = range(3, 13)
+K_RANGE = range(4, 17)
 RANDOM_STATE = 42
 SMALLEST_TEAM_MARGIN = 0.025
 MIN_COVERAGE_RETENTION = 0.96
@@ -72,10 +72,10 @@ class CandidateGod:
     pantheon: str
     domains: tuple[str, ...]
     workflow_affinity: tuple[str, ...]
-    mythic_power: float
-    name_usability: float
+    mythic_power_score: float
+    name_usability_score: float
     role_hint: str
-    notes: str
+    evidence_notes: str
 
     @classmethod
     def from_json(cls, item: dict[str, Any]) -> "CandidateGod":
@@ -84,10 +84,10 @@ class CandidateGod:
             pantheon=require_str(item, "pantheon"),
             domains=tuple(str(value) for value in item.get("domains", [])),
             workflow_affinity=tuple(str(value) for value in item.get("workflow_affinity", [])),
-            mythic_power=require_score(item, "mythic_power"),
-            name_usability=require_score(item, "name_usability"),
+            mythic_power_score=require_score(item, "mythic_power_score"),
+            name_usability_score=require_score(item, "name_usability_score"),
             role_hint=require_str(item, "role_hint"),
-            notes=require_str(item, "notes"),
+            evidence_notes=require_str(item, "evidence_notes"),
         )
 
     @property
@@ -99,7 +99,7 @@ class CandidateGod:
                 *self.domains,
                 *self.workflow_affinity,
                 self.role_hint,
-                self.notes,
+                self.evidence_notes,
             ]
         )
 
@@ -109,7 +109,7 @@ class SelectedGod:
     god: CandidateGod
     assigned_axes: tuple[WorkflowAxis, ...]
     semantic_fit_score: float
-    coverage_score: float
+    workflow_coverage_score: float
     non_overlap_score: float
     evidence_score: float
     final_score: float
@@ -223,7 +223,7 @@ def extract_axes(skill_text: str, known_axes: list[WorkflowAxis]) -> tuple[Workf
         scored.append((score, axis))
 
     selected = [axis for score, axis in scored if score > 0]
-    if len(selected) < 3:
+    if len(selected) < max(K_RANGE):
         selected = [axis for _, axis in scored]
     return tuple(selected)
 
@@ -270,7 +270,7 @@ def evaluate_team_size(
                 god=gods[god_index],
                 assigned_axes=cluster_axes_for_god,
                 semantic_fit_score=semantic_fit,
-                coverage_score=coverage,
+                workflow_coverage_score=coverage,
                 non_overlap_score=non_overlap,
                 evidence_score=evidence_score,
                 final_score=final_score,
@@ -280,8 +280,8 @@ def evaluate_team_size(
     selected_tuple = tuple(sorted(selected, key=lambda item: item.final_score, reverse=True))
     selected_indexes = [gods.index(item.god) for item in selected_tuple]
     team_coverage = float(np.max(axis_to_god_similarity[:, selected_indexes], axis=1).mean())
-    team_power = float(np.mean([item.god.mythic_power for item in selected_tuple]))
-    team_name_quality = float(np.mean([item.god.name_usability for item in selected_tuple]))
+    team_power = float(np.mean([item.god.mythic_power_score for item in selected_tuple]))
+    team_name_quality = float(np.mean([item.god.name_usability_score for item in selected_tuple]))
     team_overlap_penalty = average_pairwise_similarity(god_vectors[selected_indexes])
     team_separation = 1.0 - team_overlap_penalty
     complexity_penalty = (k - min(K_RANGE)) / (max(K_RANGE) - min(K_RANGE))
@@ -336,8 +336,8 @@ def choose_god(
             overlap = 0.0
         score = (
             0.55 * float(god_fit[index])
-            + 0.20 * god.mythic_power
-            + 0.15 * god.name_usability
+            + 0.20 * god.mythic_power_score
+            + 0.15 * god.name_usability_score
             + 0.10 * (1.0 - overlap)
         )
         scores.append((score, index))
@@ -378,8 +378,8 @@ def score_god(
         0.40 * semantic_fit
         + 0.20 * coverage
         + 0.15 * non_overlap
-        + 0.15 * god.mythic_power
-        + 0.05 * god.name_usability
+        + 0.15 * god.mythic_power_score
+        + 0.05 * god.name_usability_score
         + 0.05 * evidence_score
     )
 
@@ -549,7 +549,13 @@ def build_output(
     rejected_gods = [
         {
             "god": god.name,
-            "reason": "lower marginal coverage or higher overlap for this skill run",
+            "role": god.role_hint,
+            "mythic_power_score": round(god.mythic_power_score, 4),
+            "name_usability_score": round(god.name_usability_score, 4),
+            "reason": (
+                "not selected because the winning team covered this run's axes with "
+                "better coverage, separation, or marginal fit"
+            ),
         }
         for god in gods
         if god.name not in selected_names
@@ -568,15 +574,15 @@ def build_output(
             "god": item.god.name,
             "role": item.god.role_hint,
             "semantic_fit_score": round(item.semantic_fit_score, 4),
-            "mythic_power_score": round(item.god.mythic_power, 4),
-            "coverage_score": round(item.coverage_score, 4),
+            "workflow_coverage_score": round(item.workflow_coverage_score, 4),
             "non_overlap_score": round(item.non_overlap_score, 4),
-            "name_usability_score": round(item.god.name_usability, 4),
+            "mythic_power_score": round(item.god.mythic_power_score, 4),
+            "name_usability_score": round(item.god.name_usability_score, 4),
             "evidence_score": round(item.evidence_score, 4),
             "final_score": round(item.final_score, 4),
             "assigned_axes": [axis.axis_id for axis in item.assigned_axes],
-            "evidence": [
-                item.god.notes,
+            "evidence_notes": [
+                item.god.evidence_notes,
                 "Assigned by embedding similarity between skill axes and candidate god profile.",
             ],
         }
@@ -586,7 +592,9 @@ def build_output(
     return {
         "plugin": PLUGIN_NAME,
         "skill": skill_name,
-        "selected_command": SELECTED_COMMAND,
+        "skill_name": skill_name,
+        "command": SELECTED_COMMAND,
+        "selected_gods": [item.god.name for item in winner.selected],
         "optimal_team_size": winner.k,
         "selection_reason": (
             "Smallest team within "
@@ -597,6 +605,22 @@ def build_output(
         "team": team,
         "rejected_gods": rejected_gods,
         "rejected_team_sizes": rejected_sizes,
+        "role_assignments": {
+            item.god.name: [axis.axis_id for axis in item.assigned_axes]
+            for item in winner.selected
+        },
+        "score_breakdowns": {
+            item.god.name: {
+                "semantic_fit_score": round(item.semantic_fit_score, 4),
+                "workflow_coverage_score": round(item.workflow_coverage_score, 4),
+                "non_overlap_score": round(item.non_overlap_score, 4),
+                "mythic_power_score": round(item.god.mythic_power_score, 4),
+                "name_usability_score": round(item.god.name_usability_score, 4),
+                "evidence_score": round(item.evidence_score, 4),
+                "final_score": round(item.final_score, 4),
+            }
+            for item in winner.selected
+        },
         "axis_coverage": [axis.axis_id for axis in axes],
         "metrics": {
             "team_coverage": round(winner.team_coverage, 4),
@@ -627,8 +651,10 @@ def build_output(
             "scores": str(GOD_TEAM_SCORES_PATH),
             "visualization": str(GOD_TEAM_TSNE_PATH),
         },
+        "blocked_validations": blocked_validations(visualization_note),
         "notes": [
             visualization_note,
+            "Embeddings use deterministic local TF-IDF vectors for dry-run repeatability; no external API or vector database is required.",
             "t-SNE is visualization only and was not used as the final ranking metric.",
             "The initial 7-god team in SEMANTIC_MODEL.md is a hypothesis, not a preselected result.",
         ],
@@ -663,6 +689,18 @@ def stability_support(value: float | None) -> str:
     if value >= 0.75:
         return "usable bootstrap stability"
     return "weak bootstrap stability"
+
+
+def blocked_validations(visualization_note: str) -> list[dict[str, str]]:
+    blocked: list[dict[str, str]] = []
+    if "skipped" in visualization_note.lower():
+        blocked.append(
+            {
+                "validation": "visualizations/god_team_tsne.png",
+                "reason": visualization_note,
+            }
+        )
+    return blocked
 
 
 def slug_from_path(path: Path) -> str:
