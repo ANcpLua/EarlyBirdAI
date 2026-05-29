@@ -1,5 +1,8 @@
-# EarlyBird System Architecture
+# EarlyBird Candidate System Architecture
 
+These component labels are candidate semantic labels for the k=11 clustering artifact in
+`results/qdrant_clusters.json`. They are source-backed by the EarlyBird requirements and the bootstrap experiment, but
+remain `candidate` until a retrieval precision@k run and a human semantic-quality review promote them.
 
 ## Cluster 0: Order Assembly
 

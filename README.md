@@ -1,106 +1,114 @@
-# EarlyBird Requirements Clustering
+# EarlyBird Semantic Requirements Pipeline
 
-Semantic clustering of [44 EarlyBird breakfast delivery system requirements](data/earlybird_requirements.json) using embeddings and vector database.
+Evidence-checked semantic clustering and Qdrant ingestion for the 44 EarlyBird breakfast delivery requirements.
 
----
+`SEMANTIC_MODEL.md` is the source of truth. The pipeline deliberately separates exploratory clustering vectors from
+production retrieval embeddings:
 
-## Task
+```text
+raw requirements
+  -> bootstrap clustering experiment
+  -> verified cluster artifact
+  -> production retrieval embeddings
+  -> Qdrant ingestion
+```
 
-Feed embeddings of [functional requirements](data/earlybird_requirements.json) into a vector database ([Qdrant](https://qdrant.tech/)), cluster them, and derive an architecture proposal where each component implements one cluster of requirements.
+## Policy
 
----
-
-## Approach
-
-1. **Embeddings:** [all-mpnet-base-v2](https://huggingface.co/sentence-transformers/all-mpnet-base-v2) (768D → [PCA](https://en.wikipedia.org/wiki/Principal_component_analysis) to 16D)
-2. **Vector Database:** [Qdrant](https://qdrant.tech/) ([HNSW](https://en.wikipedia.org/wiki/Hierarchical_navigable_small_world), [cosine distance](https://en.wikipedia.org/wiki/Cosine_similarity))
-3. **Clustering:** [Spherical k-means](https://en.wikipedia.org/wiki/K-means_clustering#Spherical_k-means_clustering)
-4. **Selection:** Maximize [Silhouette score](https://en.wikipedia.org/wiki/Silhouette_(clustering)) (peaks at k=11)
-
----
-
-## Result
-
-**11 clusters** (Cluster 0-10) for [44 requirements](data/earlybird_requirements.json) (~4 per cluster)
-
-- **[Silhouette Score](https://en.wikipedia.org/wiki/Silhouette_(clustering)):** 0.306 (peak at k=11)
-- **[PCA](https://en.wikipedia.org/wiki/Principal_component_analysis) Dimensions:** 16D (76.1% variance retained)
-- **Distance Metric:** [Cosine](https://en.wikipedia.org/wiki/Cosine_similarity)
-
-See [full bootstrap analysis results](results/experiment_results.csv) for all 52 configurations tested.
-
----
-
-## Architecture
-
-See [**ARCHITECTURE.md**](docs/ARCHITECTURE.md) for component descriptions:
-
-- Cluster 0: Order Assembly
-- Cluster 1: SMS Ordering
-- Cluster 2: Repeat Orders
-- Cluster 3: Order Cancellation
-- Cluster 4: Product Catalog
-- Cluster 5: Route Planning
-- Cluster 6: System Integrations
-- Cluster 7: Invoicing
-- Cluster 8: User Access
-- Cluster 9: Product Search
-- Cluster 10: Customer Service
-
----
+- Experiment layer: `main.py` may use `sentence-transformers/all-mpnet-base-v2` with PCA projections such as 16D for
+  stability analysis and visualization.
+- Retrieval layer: `qdrant_ingest.py` must use real OpenAI retrieval embeddings for live Qdrant writes.
+- Baseline retrieval embedding: `text-embedding-3-small` at 1536 dimensions.
+- Optional benchmark ceiling: `text-embedding-3-large` at 1024 or 3072 dimensions.
+- Compressed experiment vectors are never written to Qdrant as production retrieval vectors.
 
 ## Files
 
-### Input Data
-- **data/earlybird_requirements.json** - 44 initial requirements
-
-### Results
-- **results/experiment_results.csv** - Full bootstrap analysis (52 configurations ranked)
-- **results/qdrant_clusters.json** - Requirements grouped by cluster (k=11, d=16)
-
-### Documentation
-- **docs/ARCHITECTURE.md** - Component architecture proposal
-- **docs/earlybird_clustering.png** - Comprehensive visualization
-
-### Tools
-- **main.py** - Bootstrap stability-based clustering experiment
-- **qdrant_ingest.py** - Load clustered data into Qdrant vector database
-
----
+- `data/earlybird_requirements.json` - raw requirements, R1 through R44.
+- `main.py` - bootstrap clustering experiment; writes experiment rankings and visualizations.
+- `results/experiment_results.csv` - ranked clustering candidates.
+- `results/qdrant_clusters.json` - verified cluster artifact consumed by ingestion.
+- `semantic_contracts.py` - shared schema, constants, and payload builder.
+- `qdrant_ingest.py` - dry-run or live Qdrant ingestion with `semantic_text` named vectors.
+- `scripts/validate_semantic_pipeline.py` - local audit check for schema, docs, experiment output, and duplicates.
+- `docs/ARCHITECTURE.md` - candidate architecture labels derived from the clusters.
+- `docs/earlybird_clustering.png` and `visualizations/` - generated experiment visuals.
 
 ## Usage
 
-### 1. Run Clustering Experiment
+Install dependencies when the local Python environment does not already provide them:
 
 ```bash
-# Bootstrap stability analysis (generates CSV results)
+python3 -m pip install -r requirements.txt
+```
+
+Run the clustering experiment:
+
+```bash
 python3 main.py
 ```
 
-**Output:**
-- `results/experiment_results.csv` - All 52 configurations ranked by silhouette score
-- `visualizations/` - Stability plots and t-SNE projections
-
-### 2. Load into Qdrant
+Validate the checked-in artifact and documentation locally:
 
 ```bash
-# Start Qdrant with Docker
-docker run -p 6333:6333 qdrant/qdrant
-
-# In another terminal: Load clustered requirements into Qdrant
-python3 load_qdrant.py
+python3 scripts/validate_semantic_pipeline.py
 ```
 
-**Prerequisites:** Docker installed and running
+Preview Qdrant ingestion without external services:
 
-**Input:** [results/qdrant_clusters.json](results/qdrant_clusters.json) - Requirements grouped by cluster (k=11, d=16)
+```bash
+python3 qdrant_ingest.py --dry-run
+```
 
-**Qdrant payload structure:**
+Run live ingestion:
+
+```bash
+docker run -p 6333:6333 qdrant/qdrant
+OPENAI_API_KEY=... python3 qdrant_ingest.py
+```
+
+If Qdrant or `OPENAI_API_KEY` is unavailable, `qdrant_ingest.py` falls back to the same dry-run report unless
+`--require-live` is set.
+
+## Qdrant Model
+
+- Collection: `requirements_v1`
+- Named vector: `semantic_text`
+- Distance: cosine
+- Baseline vector size: 1536
+
+Each point stores payload metadata for auditability:
+
 ```json
 {
   "req_id": "R1",
   "text": "We guarantee breakfast delivery...",
+  "source": "data/earlybird_requirements.json",
   "cluster_id": 4,
-  "label": "Product Catalog"
+  "cluster_label": "Product Catalog",
+  "semantic_version": "amaterasu-v1",
+  "embedding_model": "text-embedding-3-small",
+  "embedding_dimensions": 1536,
+  "cluster_model": "bootstrap-kmeans-v1",
+  "cluster_k": 11,
+  "projection_dimensions": 16,
+  "agent_owner": "Amaterasu",
+  "verified_by": "Ma'at",
+  "verifier": "Ma'at",
+  "status": "candidate",
+  "confidence": 0.0,
+  "evidence": []
 }
 ```
+
+## Agent Roles
+
+- Amaterasu owns semantic discovery.
+- Ma'at verifies labels, evidence, and confidence.
+- Odin is reserved for unresolved external or domain claims.
+- Athena owns taxonomy and schema normalization.
+- Hephaestus implements approved changes.
+- Shiva removes obsolete names, artifacts, and docs.
+
+Current labels remain `candidate` because the repository has clustering evidence and source references, but no live
+retrieval precision@k run or separate human semantic-quality review.

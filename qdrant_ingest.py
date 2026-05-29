@@ -1,167 +1,284 @@
 #!/usr/bin/env python3
-"""
-Load EarlyBird requirements, embed them, store them in a Qdrant collection,
-cluster the vectors, and tag each requirement with an existing component label.
-"""
+"""Ingest verified requirement clusters into Qdrant with retrieval embeddings."""
 
 from __future__ import annotations
 
-import json
-from collections import defaultdict
-from dataclasses import dataclass
+import argparse
+import os
+import sys
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Dict, Iterable, List, Tuple
+from typing import Any
 
-import numpy as np
-from qdrant_client import QdrantClient
-from qdrant_client.http import models as qmodels
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import normalize
+from semantic_contracts import (
+    BASELINE_EMBEDDING_DIMENSIONS,
+    BASELINE_EMBEDDING_MODEL,
+    CLUSTER_ARTIFACT_PATH,
+    COLLECTION_NAME,
+    DISTANCE,
+    EmbeddingConfig,
+    VECTOR_NAME,
+    build_payloads,
+    load_cluster_artifact,
+    load_requirements,
+    stable_point_id,
+    validate_artifact,
+    validate_embedding_config,
+)
 
-
-DATA_PATH = Path("data/earlybird_requirements.json")
-COLLECTION_NAME = "earlybird_requirements"
-COMPONENT_LABELS = [
-    "Operations & Fulfillment",
-    "SMS Channel",
-    "Shopping Cart",
-    "Order Cancellation",
-    "Product Catalog",
-    "Delivery Management",
-    "Platform Integration",
-    "Billing & Documentation",
-    "Access Control",
-    "Product Search & Authentication",
-    "Customer Interaction",
-]
-
-COMPONENT_REQUIREMENT_IDS: Dict[str, List[str]] = {
-    "Operations & Fulfillment": ["R18", "R19", "R20", "R43", "R44"],
-    "SMS Channel": ["R9", "R37", "R38", "R39", "R40"],
-    "Shopping Cart": ["R5", "R13", "R14", "R15", "R16"],
-    "Order Cancellation": ["R28", "R29", "R30", "R31", "R41"],
-    "Product Catalog": ["R1", "R2", "R3", "R4"],
-    "Delivery Management": ["R24", "R25", "R32"],
-    "Platform Integration": ["R33", "R35", "R42"],
-    "Billing & Documentation": ["R21", "R22", "R23", "R26"],
-    "Access Control": ["R10", "R34"],
-    "Product Search & Authentication": ["R6", "R11", "R12", "R36"],
-    "Customer Interaction": ["R7", "R8", "R17", "R27"],
-}
+QDRANT_URL = "http://localhost:6333"
 
 
-@dataclass(frozen=True)
-class Requirement:
-    req_id: str
-    text: str
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Validate the verified semantic cluster artifact, create real retrieval "
+            "embeddings, and ingest requirement points into Qdrant."
+        )
+    )
+    parser.add_argument(
+        "--cluster-artifact",
+        type=Path,
+        default=CLUSTER_ARTIFACT_PATH,
+        help="Verified cluster artifact to ingest.",
+    )
+    parser.add_argument(
+        "--qdrant-url",
+        default=QDRANT_URL,
+        help="Qdrant URL for live ingestion.",
+    )
+    parser.add_argument(
+        "--collection",
+        default=COLLECTION_NAME,
+        help="Qdrant collection name.",
+    )
+    parser.add_argument(
+        "--embedding-model",
+        default=BASELINE_EMBEDDING_MODEL,
+        help="OpenAI embedding model.",
+    )
+    parser.add_argument(
+        "--embedding-dimensions",
+        type=int,
+        default=BASELINE_EMBEDDING_DIMENSIONS,
+        help="OpenAI embedding dimensions.",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Validate payloads and report planned ingestion without external calls.",
+    )
+    parser.add_argument(
+        "--require-live",
+        action="store_true",
+        help="Fail instead of falling back to dry-run when OpenAI or Qdrant is unavailable.",
+    )
+    parser.add_argument(
+        "--no-recreate",
+        action="store_true",
+        help="Do not delete and recreate the Qdrant collection before upsert.",
+    )
+    return parser.parse_args()
 
 
-def load_requirements(path: Path = DATA_PATH) -> List[Requirement]:
-    raw = json.loads(path.read_text(encoding="utf-8"))
-    return [Requirement(req_id=item["id"], text=item["text"]) for item in raw]
-
-
-def embed_requirements(requirements: Iterable[Requirement]) -> np.ndarray:
-    texts = [req.text for req in requirements]
-    vectorizer = TfidfVectorizer(ngram_range=(1, 2), max_features=1024)
-    matrix = vectorizer.fit_transform(texts)
-    embeddings = matrix.astype(np.float32).toarray()
-    normalize(embeddings, axis=1, copy=False)
-    return embeddings
-
-
-def assign_cluster_labels(requirements: List[Requirement]) -> List[Tuple[int, str]]:
-    req_to_cluster: Dict[str, Tuple[int, str]] = {}
-    for label, req_ids in COMPONENT_REQUIREMENT_IDS.items():
-        cluster_id = COMPONENT_LABELS.index(label)
-        for req_id in req_ids:
-            req_to_cluster[req_id] = (cluster_id, label)
-
-    assignments = []
-    for req in requirements:
-        if req.req_id not in req_to_cluster:
-            raise ValueError(f"Requirement {req.req_id} missing in component mapping.")
-        assignments.append(req_to_cluster[req.req_id])
-    return assignments
-
-
-def upload_to_qdrant(
-    requirements: List[Requirement],
-    embeddings: np.ndarray,
-    assignments: List[Tuple[int, str]],
-) -> QdrantClient:
-    dim = embeddings.shape[1]
-    client = QdrantClient(path=":memory:")
-
-    if client.collection_exists(COLLECTION_NAME):
-        client.delete_collection(COLLECTION_NAME)
-
-    client.create_collection(
-        collection_name=COLLECTION_NAME,
-        vectors_config=qmodels.VectorParams(size=dim, distance=qmodels.Distance.COSINE),
+def main() -> int:
+    args = parse_args()
+    embedding = EmbeddingConfig(
+        model=args.embedding_model,
+        dimensions=args.embedding_dimensions,
     )
 
-    points = []
-    for idx, (req, vector, assignment) in enumerate(zip(requirements, embeddings, assignments)):
-        cluster_id, label = assignment
-        points.append(
-            qmodels.PointStruct(
-                id=idx,
-                vector=vector.astype(np.float32).tolist(),
-                payload={
-                    "req_id": req.req_id,
-                    "text": req.text,
-                    "cluster_id": int(cluster_id),
-                    "label": label,
-                },
-            )
-        )
+    config_errors = validate_embedding_config(embedding)
+    if config_errors:
+        return fail(config_errors)
 
-    client.upload_points(collection_name=COLLECTION_NAME, points=points)
-    return client
-
-
-def fetch_cluster_summary(client: QdrantClient) -> Dict[str, List[Dict[str, str]]]:
-    scroll_result, _ = client.scroll(
-        collection_name=COLLECTION_NAME,
-        with_payload=True,
-        limit=100,
-    )
-
-    summary: Dict[str, List[Dict[str, str]]] = defaultdict(list)
-    for point in scroll_result:
-        payload = point.payload or {}
-        summary[payload["label"]].append(
-            {
-                "req_id": payload["req_id"],
-                "text": payload["text"],
-                "cluster_id": payload["cluster_id"],
-            }
-        )
-
-    for entries in summary.values():
-        entries.sort(key=lambda item: item["req_id"])
-
-    return dict(sorted(summary.items(), key=lambda kv: COMPONENT_LABELS.index(kv[0])))
-
-
-def main() -> None:
     requirements = load_requirements()
-    embeddings = embed_requirements(requirements)
-    assignments = assign_cluster_labels(requirements)
-    client = upload_to_qdrant(requirements, embeddings, assignments)
-    summary = fetch_cluster_summary(client)
+    artifact = load_cluster_artifact(args.cluster_artifact)
+    artifact_errors = validate_artifact(artifact, requirements)
+    if artifact_errors:
+        return fail(artifact_errors)
 
-    output_path = Path("results") / "qdrant_clusters.json"
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    payloads = build_payloads(artifact, embedding)
+    if args.collection != artifact.collection_name:
+        return fail([f"--collection must match artifact collection {artifact.collection_name!r}"])
+    if artifact.vector_name != VECTOR_NAME:
+        return fail([f"artifact vector name must be {VECTOR_NAME!r}"])
+    if artifact.distance != DISTANCE:
+        return fail([f"artifact distance must be {DISTANCE!r}"])
 
-    print("Cluster summary written to", output_path)
-    for label, items in summary.items():
-        print(f"\n{label} ({len(items)} requirements)")
-        for entry in items:
-            print(f"  - {entry['req_id']}: {entry['text']}")
+    if args.dry_run:
+        print_dry_run(payloads, embedding, args, reason="--dry-run requested")
+        return 0
+
+    client, qdrant_error = try_qdrant_client(args)
+    if client is None:
+        print_dry_run(payloads, embedding, args, reason=f"Qdrant is unavailable: {qdrant_error}")
+        return 1 if args.require_live else 0
+
+    vectors, embedding_error = try_openai_embeddings(
+        [payload["text"] for payload in payloads],
+        embedding,
+    )
+    if vectors is None:
+        print_dry_run(
+            payloads,
+            embedding,
+            args,
+            reason=f"OpenAI embeddings are unavailable: {embedding_error}",
+        )
+        return 1 if args.require_live else 0
+
+    ingest_points(
+        client=client,
+        collection_name=args.collection,
+        vector_name=artifact.vector_name,
+        embedding=embedding,
+        payloads=payloads,
+        vectors=vectors,
+        recreate=not args.no_recreate,
+    )
+
+    print(
+        f"Ingested {len(payloads)} requirements into {args.collection} "
+        f"using {embedding.model}/{embedding.dimensions}."
+    )
+    return 0
+
+
+def try_qdrant_client(args: argparse.Namespace) -> tuple[Any | None, str | None]:
+    try:
+        from qdrant_client import QdrantClient
+    except ImportError as exc:
+        return None, f"qdrant-client import failed: {exc}"
+
+    try:
+        client = QdrantClient(url=args.qdrant_url)
+        client.get_collections()
+        return client, None
+    except Exception as exc:  # pragma: no cover - depends on external service
+        return None, f"connection failed at {args.qdrant_url}: {exc}"
+
+
+def try_openai_embeddings(
+    texts: Sequence[str],
+    embedding: EmbeddingConfig,
+) -> tuple[list[list[float]] | None, str | None]:
+    if not os.environ.get("OPENAI_API_KEY"):
+        return None, "OPENAI_API_KEY is not set"
+
+    try:
+        from openai import OpenAI
+    except ImportError as exc:
+        return None, f"openai import failed: {exc}"
+
+    try:
+        client = OpenAI()
+        response = client.embeddings.create(
+            model=embedding.model,
+            input=list(texts),
+            dimensions=embedding.dimensions,
+            encoding_format="float",
+        )
+    except Exception as exc:  # pragma: no cover - depends on external service
+        return None, f"embedding request failed: {exc}"
+
+    vectors = [
+        list(item.embedding)
+        for item in sorted(response.data, key=lambda item: item.index)
+    ]
+    wrong_sizes = [len(vector) for vector in vectors if len(vector) != embedding.dimensions]
+    if wrong_sizes:
+        raise ValueError(
+            "OpenAI returned embedding dimensions that do not match "
+            f"{embedding.dimensions}: {wrong_sizes}"
+        )
+    return vectors, None
+
+
+def ingest_points(
+    client: Any,
+    collection_name: str,
+    vector_name: str,
+    embedding: EmbeddingConfig,
+    payloads: Sequence[dict[str, Any]],
+    vectors: Sequence[Sequence[float]],
+    recreate: bool,
+) -> None:
+    from qdrant_client.http import models as qmodels
+
+    if recreate and client.collection_exists(collection_name):
+        client.delete_collection(collection_name)
+
+    if not client.collection_exists(collection_name):
+        client.create_collection(
+            collection_name=collection_name,
+            vectors_config={
+                vector_name: qmodels.VectorParams(
+                    size=embedding.dimensions,
+                    distance=qmodels.Distance.COSINE,
+                )
+            },
+        )
+        create_payload_indexes(client, collection_name, qmodels)
+
+    points = [
+        qmodels.PointStruct(
+            id=stable_point_id(payload["req_id"]),
+            vector={vector_name: list(vector)},
+            payload=payload,
+        )
+        for payload, vector in zip(payloads, vectors, strict=True)
+    ]
+    client.upsert(collection_name=collection_name, points=points)
+
+
+def create_payload_indexes(client: Any, collection_name: str, qmodels: Any) -> None:
+    indexes = {
+        "req_id": qmodels.PayloadSchemaType.KEYWORD,
+        "source": qmodels.PayloadSchemaType.KEYWORD,
+        "cluster_id": qmodels.PayloadSchemaType.INTEGER,
+        "cluster_label": qmodels.PayloadSchemaType.KEYWORD,
+        "semantic_version": qmodels.PayloadSchemaType.KEYWORD,
+        "embedding_model": qmodels.PayloadSchemaType.KEYWORD,
+        "embedding_dimensions": qmodels.PayloadSchemaType.INTEGER,
+        "cluster_model": qmodels.PayloadSchemaType.KEYWORD,
+        "cluster_k": qmodels.PayloadSchemaType.INTEGER,
+        "projection_dimensions": qmodels.PayloadSchemaType.INTEGER,
+        "agent_owner": qmodels.PayloadSchemaType.KEYWORD,
+        "verified_by": qmodels.PayloadSchemaType.KEYWORD,
+        "verifier": qmodels.PayloadSchemaType.KEYWORD,
+        "status": qmodels.PayloadSchemaType.KEYWORD,
+    }
+    for field_name, schema in indexes.items():
+        client.create_payload_index(
+            collection_name=collection_name,
+            field_name=field_name,
+            field_schema=schema,
+        )
+
+
+def print_dry_run(
+    payloads: Sequence[dict[str, Any]],
+    embedding: EmbeddingConfig,
+    args: argparse.Namespace,
+    reason: str,
+) -> None:
+    cluster_ids = sorted({payload["cluster_id"] for payload in payloads})
+    print("DRY RUN:", reason)
+    print(f"Validated payloads: {len(payloads)}")
+    print(f"Collection: {args.collection}")
+    print(f"Named vector: {VECTOR_NAME}")
+    print(f"Distance: {DISTANCE}")
+    print(f"Embedding: {embedding.model}/{embedding.dimensions}")
+    print(f"Clusters: {cluster_ids[0]}..{cluster_ids[-1]} ({len(cluster_ids)} total)")
+    print("No embeddings were requested and no Qdrant writes were performed.")
+
+
+def fail(errors: Sequence[str]) -> int:
+    for error in errors:
+        print(f"ERROR: {error}", file=sys.stderr)
+    return 1
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
