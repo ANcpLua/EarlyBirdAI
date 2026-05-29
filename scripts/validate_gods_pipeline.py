@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
 import json
 import sys
@@ -77,8 +78,9 @@ PROFILE_FIELDS = {
 
 
 def main() -> int:
+    args = parse_args()
     errors: list[str] = []
-    discover_god_team(None)
+    discover_god_team(args.skill)
 
     errors.extend(check_plugin_shape())
     errors.extend(check_source_data())
@@ -102,6 +104,15 @@ def main() -> int:
     return 0
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Validate the gods discovery pipeline.")
+    parser.add_argument(
+        "--skill",
+        help="Optional skill markdown path or inline task to validate instead of the default example.",
+    )
+    return parser.parse_args()
+
+
 def check_plugin_shape() -> list[str]:
     errors: list[str] = []
     manifest_path = ROOT / ".claude-plugin/plugin.json"
@@ -111,7 +122,7 @@ def check_plugin_shape() -> list[str]:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     if manifest.get("name") != "gods":
         errors.append("plugin manifest name must be gods")
-    for skill_name in ["review", "forge", "evolve", "rank"]:
+    for skill_name in ["review", "nihil", "forge", "evolve", "rank"]:
         path = ROOT / "skills" / skill_name / "SKILL.md"
         if not path.exists():
             errors.append(f"missing /gods:{skill_name} skill")

@@ -1,7 +1,7 @@
 {
   "plugin": "gods",
-  "skill": "thermo-nuclear-code-quality-review",
-  "skill_name": "thermo-nuclear-code-quality-review",
+  "skill": "nihil-first-principles-transformation",
+  "skill_name": "nihil-first-principles-transformation",
   "command": "/gods:review",
   "selected_gods": [
     "Ma'at",

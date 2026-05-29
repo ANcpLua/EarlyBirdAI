@@ -15,6 +15,7 @@ workflow without wasteful overlap.
 ## Commands
 
 - `/gods:review <task-or-skill-path>` - discover and use a God Team for review.
+- `/gods:nihil <target-scope>` - run the evaluated k=10 Nihil transformation workflow.
 - `/gods:forge` - refine workflow axes or candidate god profiles.
 - `/gods:evolve` - improve a previous run from its rejected gods and rejected sizes.
 - `/gods:rank <task-or-skill-path>` - inspect scoring and rejected alternatives.

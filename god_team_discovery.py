@@ -181,13 +181,12 @@ def read_skill_input(skill_input: str | None) -> tuple[str, str]:
     if skill_input:
         path = Path(skill_input)
         if path.exists() and path.is_file():
-            return slug_from_path(path), path.read_text(encoding="utf-8")
+            skill_text = path.read_text(encoding="utf-8")
+            return skill_name_from_text(path, skill_text), skill_text
         return "inline-skill", skill_input
 
-    return (
-        DEFAULT_SKILL_PATH.stem,
-        DEFAULT_SKILL_PATH.read_text(encoding="utf-8"),
-    )
+    skill_text = DEFAULT_SKILL_PATH.read_text(encoding="utf-8")
+    return skill_name_from_text(DEFAULT_SKILL_PATH, skill_text), skill_text
 
 
 def load_axes(path: Path) -> list[WorkflowAxis]:
@@ -705,6 +704,20 @@ def blocked_validations(visualization_note: str) -> list[dict[str, str]]:
 
 def slug_from_path(path: Path) -> str:
     return path.stem.lower().replace(" ", "-")
+
+
+def skill_name_from_text(path: Path, text: str) -> str:
+    if text.startswith("---"):
+        for line in text.splitlines()[1:]:
+            if line.strip() == "---":
+                break
+            if line.startswith("name:"):
+                name = line.split(":", 1)[1].strip().strip("\"'")
+                if name:
+                    return name
+    if path.name == "SKILL.md" and path.parent.name:
+        return path.parent.name.lower().replace(" ", "-")
+    return slug_from_path(path)
 
 
 def format_optional(value: float | None) -> str:
