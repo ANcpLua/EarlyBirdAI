@@ -1,0 +1,248 @@
+{
+  "plugin": "gods",
+  "skill": "thermo-nuclear-code-quality-review",
+  "selected_command": "/gods:review",
+  "optimal_team_size": 7,
+  "selection_reason": "Smallest team within 0.025 of the best score while balancing coverage, retaining at least 96% of the best coverage, separation, mythic power, name usability, silhouette, and stability.",
+  "team": [
+    {
+      "god": "Ma'at",
+      "role": "truth and approval bar",
+      "semantic_fit_score": 0.3686,
+      "mythic_power_score": 0.93,
+      "coverage_score": 0.266,
+      "non_overlap_score": 0.9238,
+      "name_usability_score": 0.86,
+      "evidence_score": 0.5,
+      "final_score": 0.5467,
+      "assigned_axes": [
+        "canonical_layer_ownership",
+        "approval_bar"
+      ],
+      "evidence": [
+        "Strong fit for evidence, correctness, and high approval thresholds.",
+        "Assigned by embedding similarity between skill axes and candidate god profile."
+      ]
+    },
+    {
+      "god": "Hermes",
+      "role": "routing and orchestration clarity",
+      "semantic_fit_score": 0.2836,
+      "mythic_power_score": 0.84,
+      "coverage_score": 0.2836,
+      "non_overlap_score": 0.959,
+      "name_usability_score": 0.92,
+      "evidence_score": 1.0,
+      "final_score": 0.536,
+      "assigned_axes": [
+        "orchestration_atomicity"
+      ],
+      "evidence": [
+        "Strong fit for routing work, handoffs, and orchestration.",
+        "Assigned by embedding similarity between skill axes and candidate god profile."
+      ]
+    },
+    {
+      "god": "Shiva",
+      "role": "complexity deletion",
+      "semantic_fit_score": 0.2346,
+      "mythic_power_score": 0.98,
+      "coverage_score": 0.1705,
+      "non_overlap_score": 1.0,
+      "name_usability_score": 0.9,
+      "evidence_score": 0.5,
+      "final_score": 0.495,
+      "assigned_axes": [
+        "code_judo",
+        "complexity_deletion"
+      ],
+      "evidence": [
+        "Strong fit for deleting accidental complexity and dead abstractions.",
+        "Assigned by embedding similarity between skill axes and candidate god profile."
+      ]
+    },
+    {
+      "god": "Janus",
+      "role": "boundary review",
+      "semantic_fit_score": 0.1836,
+      "mythic_power_score": 0.82,
+      "coverage_score": 0.1332,
+      "non_overlap_score": 0.9767,
+      "name_usability_score": 0.89,
+      "evidence_score": 1.0,
+      "final_score": 0.4641,
+      "assigned_axes": [
+        "file_size_boundary",
+        "type_boundary_cleanliness"
+      ],
+      "evidence": [
+        "Strong fit for API, type, module, and compatibility boundaries.",
+        "Assigned by embedding similarity between skill axes and candidate god profile."
+      ]
+    },
+    {
+      "god": "Athena",
+      "role": "strategic architecture judgment",
+      "semantic_fit_score": 0.1393,
+      "mythic_power_score": 0.91,
+      "coverage_score": 0.101,
+      "non_overlap_score": 0.9797,
+      "name_usability_score": 0.94,
+      "evidence_score": 0.5,
+      "final_score": 0.4314,
+      "assigned_axes": [
+        "architecture_review",
+        "spaghetti_detection"
+      ],
+      "evidence": [
+        "Strong fit for architecture, strategy, design tradeoffs, and principled review judgment.",
+        "Assigned by embedding similarity between skill axes and candidate god profile."
+      ]
+    },
+    {
+      "god": "Thoth",
+      "role": "precise records and documentation",
+      "semantic_fit_score": 0.0834,
+      "mythic_power_score": 0.86,
+      "coverage_score": 0.0834,
+      "non_overlap_score": 0.9766,
+      "name_usability_score": 0.84,
+      "evidence_score": 1.0,
+      "final_score": 0.4176,
+      "assigned_axes": [
+        "output_prioritization"
+      ],
+      "evidence": [
+        "Strong fit for documentation, output records, and naming precision.",
+        "Assigned by embedding similarity between skill axes and candidate god profile."
+      ]
+    },
+    {
+      "god": "Odin",
+      "role": "deep investigation",
+      "semantic_fit_score": 0.0537,
+      "mythic_power_score": 0.95,
+      "coverage_score": 0.0391,
+      "non_overlap_score": 0.9736,
+      "name_usability_score": 0.91,
+      "evidence_score": 0.5,
+      "final_score": 0.3883,
+      "assigned_axes": [
+        "structural_simplification",
+        "tone_enforcement"
+      ],
+      "evidence": [
+        "Strong fit for hidden causes and non-obvious review paths.",
+        "Assigned by embedding similarity between skill axes and candidate god profile."
+      ]
+    }
+  ],
+  "rejected_gods": [
+    {
+      "god": "Hephaestus",
+      "reason": "lower marginal coverage or higher overlap for this skill run"
+    },
+    {
+      "god": "Apollo",
+      "reason": "lower marginal coverage or higher overlap for this skill run"
+    },
+    {
+      "god": "Ares",
+      "reason": "lower marginal coverage or higher overlap for this skill run"
+    },
+    {
+      "god": "Hades",
+      "reason": "lower marginal coverage or higher overlap for this skill run"
+    },
+    {
+      "god": "Vishvakarma",
+      "reason": "lower marginal coverage or higher overlap for this skill run"
+    }
+  ],
+  "rejected_team_sizes": [
+    {
+      "k": 3,
+      "score": 0.5698,
+      "reason": "too compressed for the selected coverage/separation target"
+    },
+    {
+      "k": 4,
+      "score": 0.5709,
+      "reason": "too compressed for the selected coverage/separation target"
+    },
+    {
+      "k": 5,
+      "score": 0.5732,
+      "reason": "too compressed for the selected coverage/separation target"
+    },
+    {
+      "k": 6,
+      "score": 0.5711,
+      "reason": "too compressed for the selected coverage/separation target"
+    },
+    {
+      "k": 8,
+      "score": 0.5635,
+      "reason": "more roles without enough score improvement"
+    },
+    {
+      "k": 9,
+      "score": 0.5352,
+      "reason": "more roles without enough score improvement"
+    },
+    {
+      "k": 10,
+      "score": 0.5289,
+      "reason": "more roles without enough score improvement"
+    },
+    {
+      "k": 11,
+      "score": 0.5219,
+      "reason": "more roles without enough score improvement"
+    },
+    {
+      "k": 12,
+      "score": 0.5146,
+      "reason": "more roles without enough score improvement"
+    }
+  ],
+  "axis_coverage": [
+    "structural_simplification",
+    "code_judo",
+    "architecture_review",
+    "complexity_deletion",
+    "spaghetti_detection",
+    "file_size_boundary",
+    "type_boundary_cleanliness",
+    "canonical_layer_ownership",
+    "orchestration_atomicity",
+    "output_prioritization",
+    "approval_bar",
+    "tone_enforcement"
+  ],
+  "metrics": {
+    "team_coverage": 0.1577,
+    "team_separation": 0.9774,
+    "team_power": 0.8986,
+    "team_overlap_penalty": 0.0226,
+    "team_name_quality": 0.8943,
+    "team_complexity_penalty": 0.4444,
+    "silhouette": 0.0312,
+    "bootstrap_stability": 0.9613
+  },
+  "validation": {
+    "tsne_visual_support": "Generated for visual inspection only; inspect the PNG for neighborhood sanity.",
+    "silhouette_support": "weak positive; roles are separated but still semantically close",
+    "bootstrap_stability_support": "strong bootstrap stability",
+    "smaller_than_redundant_team": true
+  },
+  "outputs": {
+    "scores": "results/god_team_scores.csv",
+    "visualization": "visualizations/god_team_tsne.png"
+  },
+  "notes": [
+    "t-SNE visualization written to visualizations/god_team_tsne.png.",
+    "t-SNE is visualization only and was not used as the final ranking metric.",
+    "The initial 7-god team in SEMANTIC_MODEL.md is a hypothesis, not a preselected result."
+  ]
+}

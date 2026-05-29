@@ -1,114 +1,87 @@
-# EarlyBird Semantic Requirements Pipeline
+# Gods
 
-Evidence-checked semantic clustering and Qdrant ingestion for the 44 EarlyBird breakfast delivery requirements.
+Dynamic God Team discovery for Claude Code workflow and review skills.
 
-`SEMANTIC_MODEL.md` is the source of truth. The pipeline deliberately separates exploratory clustering vectors from
-production retrieval embeddings:
+This repository is a Claude Code plugin named `gods`. The primary command is:
 
 ```text
-raw requirements
-  -> bootstrap clustering experiment
-  -> verified cluster artifact
-  -> production retrieval embeddings
-  -> Qdrant ingestion
+/gods:review
 ```
 
-## Policy
+The plugin does not hard-code a pantheon. It reads a skill or workflow prompt, extracts review axes, embeds those axes
+with candidate deity profiles, searches team sizes `k=3..12`, and writes the smallest powerful team that covers the
+workflow without wasteful overlap.
 
-- Experiment layer: `main.py` may use `sentence-transformers/all-mpnet-base-v2` with PCA projections such as 16D for
-  stability analysis and visualization.
-- Retrieval layer: `qdrant_ingest.py` must use real OpenAI retrieval embeddings for live Qdrant writes.
-- Baseline retrieval embedding: `text-embedding-3-small` at 1536 dimensions.
-- Optional benchmark ceiling: `text-embedding-3-large` at 1024 or 3072 dimensions.
-- Compressed experiment vectors are never written to Qdrant as production retrieval vectors.
+## Commands
 
-## Files
+- `/gods:review <task-or-skill-path>` - discover and use a God Team for review.
+- `/gods:forge` - refine workflow axes or candidate god profiles.
+- `/gods:evolve` - improve a previous run from its rejected gods and rejected sizes.
+- `/gods:rank <task-or-skill-path>` - inspect scoring and rejected alternatives.
 
-- `data/earlybird_requirements.json` - raw requirements, R1 through R44.
-- `main.py` - bootstrap clustering experiment; writes experiment rankings and visualizations.
-- `results/experiment_results.csv` - ranked clustering candidates.
-- `results/qdrant_clusters.json` - verified cluster artifact consumed by ingestion.
-- `semantic_contracts.py` - shared schema, constants, and payload builder.
-- `qdrant_ingest.py` - dry-run or live Qdrant ingestion with `semantic_text` named vectors.
-- `scripts/validate_semantic_pipeline.py` - local audit check for schema, docs, experiment output, and duplicates.
-- `docs/ARCHITECTURE.md` - candidate architecture labels derived from the clusters.
-- `docs/earlybird_clustering.png` and `visualizations/` - generated experiment visuals.
+## Local Usage
 
-## Usage
-
-Install dependencies when the local Python environment does not already provide them:
+Install dependencies when needed:
 
 ```bash
 python3 -m pip install -r requirements.txt
 ```
 
-Run the clustering experiment:
+Run the default thermo-nuclear review example:
 
 ```bash
 python3 main.py
 ```
 
-Validate the checked-in artifact and documentation locally:
+Run against a specific skill markdown file or inline task:
 
 ```bash
-python3 scripts/validate_semantic_pipeline.py
+python3 main.py --skill examples/thermo-nuclear-code-quality-review.md
+python3 main.py --skill "Review a Python refactor for architecture, deletion, type boundaries, and approval bar."
 ```
 
-Preview Qdrant ingestion without external services:
+Validate the plugin shape and generated artifacts:
 
 ```bash
-python3 qdrant_ingest.py --dry-run
+python3 scripts/validate_gods_pipeline.py
 ```
 
-Run live ingestion:
+Test the plugin in Claude Code:
 
 ```bash
-docker run -p 6333:6333 qdrant/qdrant
-OPENAI_API_KEY=... python3 qdrant_ingest.py
+claude --plugin-dir .
 ```
 
-If Qdrant or `OPENAI_API_KEY` is unavailable, `qdrant_ingest.py` falls back to the same dry-run report unless
-`--require-live` is set.
+Then invoke:
 
-## Qdrant Model
-
-- Collection: `requirements_v1`
-- Named vector: `semantic_text`
-- Distance: cosine
-- Baseline vector size: 1536
-
-Each point stores payload metadata for auditability:
-
-```json
-{
-  "req_id": "R1",
-  "text": "We guarantee breakfast delivery...",
-  "source": "data/earlybird_requirements.json",
-  "cluster_id": 4,
-  "cluster_label": "Product Catalog",
-  "semantic_version": "amaterasu-v1",
-  "embedding_model": "text-embedding-3-small",
-  "embedding_dimensions": 1536,
-  "cluster_model": "bootstrap-kmeans-v1",
-  "cluster_k": 11,
-  "projection_dimensions": 16,
-  "agent_owner": "Amaterasu",
-  "verified_by": "Ma'at",
-  "verifier": "Ma'at",
-  "status": "candidate",
-  "confidence": 0.0,
-  "evidence": []
-}
+```text
+/gods:review examples/thermo-nuclear-code-quality-review.md
 ```
 
-## Agent Roles
+## Outputs
 
-- Amaterasu owns semantic discovery.
-- Ma'at verifies labels, evidence, and confidence.
-- Odin is reserved for unresolved external or domain claims.
-- Athena owns taxonomy and schema normalization.
-- Hephaestus implements approved changes.
-- Shiva removes obsolete names, artifacts, and docs.
+The discovery run writes:
 
-Current labels remain `candidate` because the repository has clustering evidence and source references, but no live
-retrieval precision@k run or separate human semantic-quality review.
+```text
+results/god_team_scores.csv
+results/god_team.json
+visualizations/god_team_tsne.png
+```
+
+`results/god_team.json` contains the selected team, rejected gods, rejected team sizes, assigned workflow axes, and
+coverage/separation metrics.
+
+## Model
+
+The scoring model balances:
+
+- semantic fit
+- workflow coverage
+- non-overlap
+- mythic power
+- name usability
+- evidence score
+
+t-SNE is only a visualization layer. It is not used as the final ranking metric.
+
+See `SEMANTIC_MODEL.md` for the full model.

@@ -1,0 +1,74 @@
+[
+  {
+    "id": "structural_simplification",
+    "label": "Structural simplification",
+    "description": "Prefer simpler structures, fewer moving parts, direct ownership, and designs that remove unnecessary shape from the system.",
+    "keywords": ["structural", "simplification", "simple", "fewer", "direct", "shape"]
+  },
+  {
+    "id": "code_judo",
+    "label": "Code-judo leverage",
+    "description": "Find small high-leverage changes that redirect the problem instead of adding force, ceremony, or broad rewrites.",
+    "keywords": ["code-judo", "judo", "leverage", "small", "redirect", "ceremony"]
+  },
+  {
+    "id": "architecture_review",
+    "label": "Architecture review",
+    "description": "Judge strategic structure, design quality, coupling, cohesion, abstraction boundaries, and whether the system shape fits the task.",
+    "keywords": ["architecture", "structure", "design", "strategy", "coupling", "cohesion", "abstraction"]
+  },
+  {
+    "id": "complexity_deletion",
+    "label": "Complexity deletion",
+    "description": "Remove accidental complexity, dead abstractions, redundant layers, compatibility shims, and code that survives only from inertia.",
+    "keywords": ["delete", "remove", "complexity", "dead", "redundant", "judo", "simplify"]
+  },
+  {
+    "id": "spaghetti_detection",
+    "label": "Spaghetti detection",
+    "description": "Find tangled control flow, hidden coupling, unbounded responsibility growth, and code paths that are hard to reason about.",
+    "keywords": ["spaghetti", "tangled", "coupling", "hidden", "responsibility", "growth"]
+  },
+  {
+    "id": "file_size_boundary",
+    "label": "File-size boundary",
+    "description": "Notice files or modules that have grown too large, lost locality, or mixed unrelated responsibilities.",
+    "keywords": ["file", "module", "large", "boundary", "responsibility", "locality"]
+  },
+  {
+    "id": "type_boundary_cleanliness",
+    "label": "Type boundary cleanliness",
+    "description": "Check type contracts, API surfaces, schema transitions, parse boundaries, and whether callers see clean domain concepts.",
+    "keywords": ["type", "schema", "api", "contract", "boundary", "parse", "surface"]
+  },
+  {
+    "id": "canonical_layer_ownership",
+    "label": "Canonical-layer ownership",
+    "description": "Verify that domain truth lives in the canonical layer and is not duplicated or reinterpreted in weaker downstream code.",
+    "keywords": ["canonical", "ownership", "layer", "source of truth", "duplicate", "domain"]
+  },
+  {
+    "id": "orchestration_atomicity",
+    "label": "Orchestration atomicity",
+    "description": "Review sequencing, routing, atomic workflow steps, handoff points, and whether orchestration is explicit enough to audit.",
+    "keywords": ["orchestration", "routing", "sequence", "atomic", "handoff", "workflow"]
+  },
+  {
+    "id": "output_prioritization",
+    "label": "Output prioritization",
+    "description": "Prioritize findings by severity, lead with risks, and keep output useful instead of dumping every possible comment.",
+    "keywords": ["output", "findings", "priority", "severity", "risk", "report"]
+  },
+  {
+    "id": "approval_bar",
+    "label": "Approval bar",
+    "description": "Enforce evidence, correctness, and a strict approval threshold before claiming a change is acceptable.",
+    "keywords": ["approval", "evidence", "correctness", "bar", "verify", "truth"]
+  },
+  {
+    "id": "tone_enforcement",
+    "label": "Tone enforcement",
+    "description": "Keep review language direct, useful, non-performative, and aligned with the workflow's expected communication style.",
+    "keywords": ["tone", "language", "direct", "communication", "style", "non-performative"]
+  }
+]

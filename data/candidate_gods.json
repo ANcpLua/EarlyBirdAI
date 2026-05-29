@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Athena",
+    "pantheon": "Greek",
+    "domains": ["wisdom", "strategy", "craft", "civil order", "war counsel"],
+    "workflow_affinity": ["strategic architecture judgment", "design quality", "refactor judgment", "clean structure"],
+    "mythic_power": 0.91,
+    "name_usability": 0.94,
+    "role_hint": "strategic architecture judgment",
+    "notes": "Strong fit for architecture, strategy, design tradeoffs, and principled review judgment."
+  },
+  {
+    "name": "Shiva",
+    "pantheon": "Hindu",
+    "domains": ["destruction", "transformation", "renewal", "cosmic dissolution"],
+    "workflow_affinity": ["delete complexity", "remove obsolete structure", "break false stability", "renew through simplification"],
+    "mythic_power": 0.98,
+    "name_usability": 0.90,
+    "role_hint": "complexity deletion",
+    "notes": "Strong fit for deleting accidental complexity and dead abstractions."
+  },
+  {
+    "name": "Hephaestus",
+    "pantheon": "Greek",
+    "domains": ["craft", "forge", "engineering", "tools", "metalwork"],
+    "workflow_affinity": ["implementation structure", "maintainable construction", "concrete fixes", "toolmaking"],
+    "mythic_power": 0.87,
+    "name_usability": 0.88,
+    "role_hint": "implementation craft",
+    "notes": "Strong fit for practical implementation quality and craft."
+  },
+  {
+    "name": "Ma'at",
+    "pantheon": "Egyptian",
+    "domains": ["truth", "justice", "balance", "order", "evidence"],
+    "workflow_affinity": ["approval bar", "evidence review", "correctness", "truth maintenance", "strict judgment"],
+    "mythic_power": 0.93,
+    "name_usability": 0.86,
+    "role_hint": "truth and approval bar",
+    "notes": "Strong fit for evidence, correctness, and high approval thresholds."
+  },
+  {
+    "name": "Hermes",
+    "pantheon": "Greek",
+    "domains": ["messages", "boundaries", "travel", "routing", "translation"],
+    "workflow_affinity": ["workflow routing", "orchestration clarity", "handoffs", "sequencing", "communication"],
+    "mythic_power": 0.84,
+    "name_usability": 0.92,
+    "role_hint": "routing and orchestration clarity",
+    "notes": "Strong fit for routing work, handoffs, and orchestration."
+  },
+  {
+    "name": "Janus",
+    "pantheon": "Roman",
+    "domains": ["doors", "thresholds", "transitions", "beginnings", "endings"],
+    "workflow_affinity": ["type boundaries", "API boundaries", "compatibility review", "migration thresholds", "module seams"],
+    "mythic_power": 0.82,
+    "name_usability": 0.89,
+    "role_hint": "boundary review",
+    "notes": "Strong fit for API, type, module, and compatibility boundaries."
+  },
+  {
+    "name": "Odin",
+    "pantheon": "Norse",
+    "domains": ["wisdom", "runes", "sacrifice", "hidden knowledge", "quests"],
+    "workflow_affinity": ["deep investigation", "hidden causes", "non-obvious simplification", "root-cause research"],
+    "mythic_power": 0.95,
+    "name_usability": 0.91,
+    "role_hint": "deep investigation",
+    "notes": "Strong fit for hidden causes and non-obvious review paths."
+  },
+  {
+    "name": "Apollo",
+    "pantheon": "Greek",
+    "domains": ["light", "clarity", "music", "prophecy", "healing"],
+    "workflow_affinity": ["clarity", "diagnostic light", "readable expression", "clean communication", "tone"],
+    "mythic_power": 0.88,
+    "name_usability": 0.93,
+    "role_hint": "clarity and diagnostic light",
+    "notes": "Strong fit for readability, expression, and illuminating unclear code."
+  },
+  {
+    "name": "Thoth",
+    "pantheon": "Egyptian",
+    "domains": ["writing", "records", "measurement", "knowledge", "language"],
+    "workflow_affinity": ["documentation", "precise language", "records", "output expectations", "naming"],
+    "mythic_power": 0.86,
+    "name_usability": 0.84,
+    "role_hint": "precise records and documentation",
+    "notes": "Strong fit for documentation, output records, and naming precision."
+  },
+  {
+    "name": "Ares",
+    "pantheon": "Greek",
+    "domains": ["war", "force", "conflict", "aggression"],
+    "workflow_affinity": ["aggressive blocker enforcement", "hard stop", "risk escalation", "strict rejection"],
+    "mythic_power": 0.83,
+    "name_usability": 0.80,
+    "role_hint": "blocker enforcement",
+    "notes": "Useful when the workflow needs forceful rejection of unsafe changes."
+  },
+  {
+    "name": "Hades",
+    "pantheon": "Greek",
+    "domains": ["underworld", "hidden wealth", "dead", "buried things"],
+    "workflow_affinity": ["dead-code excavation", "hidden debt", "buried coupling", "obsolete paths"],
+    "mythic_power": 0.90,
+    "name_usability": 0.85,
+    "role_hint": "hidden-debt excavation",
+    "notes": "Strong fit for dead code, hidden debt, and buried structure."
+  },
+  {
+    "name": "Vishvakarma",
+    "pantheon": "Hindu",
+    "domains": ["architecture", "craftsmanship", "construction", "divine engineering"],
+    "workflow_affinity": ["system craftsmanship", "construction", "implementation design", "large-scale architecture"],
+    "mythic_power": 0.89,
+    "name_usability": 0.78,
+    "role_hint": "system craftsmanship",
+    "notes": "Strong fit for system construction and architecture craft."
+  }
+]

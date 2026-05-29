@@ -1,6 +1,3 @@
 matplotlib
 numpy
-openai
-qdrant-client
 scikit-learn
-sentence-transformers

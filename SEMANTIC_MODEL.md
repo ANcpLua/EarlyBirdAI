@@ -1,450 +1,290 @@
-# Semantic Requirements Model
+# Semantic Model: Dynamic God Team Discovery
 
 ## Purpose
 
-Build an evidence-checked semantic requirements pipeline for EarlyBirdAI.
+This project does not define a fixed subagent team.
 
-The pipeline separates exploratory clustering/projection from production retrieval. Compressed experiment vectors may be
-used for stability analysis and visualization, but Qdrant ingestion must use real retrieval embeddings with explicit
-payload metadata.
+It defines a dynamic God Team discovery system. Given a skill, workflow, or review prompt, the system finds the
+smallest powerful pantheon that semantically covers the work without redundant roles.
 
-This file is the source of truth for the semantic model, agent roles, embedding policy, Qdrant payload schema,
-validation expectations, and implementation boundaries.
+The goal is to evolve a skill into a Claude Code plugin called `gods`, where each invocation can derive or reuse the
+best-fitting god team for the task.
 
-## Source Status
+## Core Idea
 
-| Claim Type                                              | Status                         |
-|---------------------------------------------------------|--------------------------------|
-| OpenAI embedding dimensions                             | Publicly documented            |
-| Qdrant points, payloads, collections, and named vectors | Publicly documented            |
-| scikit-learn silhouette score behavior                  | Publicly documented            |
-| Existing repo structure                                 | Inferred from local repository |
-| Agent naming model                                      | Project design decision        |
-| k=11 and d=16 experiment setup                          | Project design decision        |
-| Qdrant payload fields                                   | Project schema decision        |
+The God Team is not hard-coded.
 
-## Current Repository Shape
+The system must:
 
-Expected root structure:
+1. Read the skill markdown.
+2. Extract its core workflow axes.
+3. Build candidate deity profiles.
+4. Embed both workflow axes and deity profiles.
+5. Evaluate candidate pantheon sizes.
+6. Score each god by semantic fit, mythic power, role coverage, non-overlap, and name usability.
+7. Select the smallest team that covers the skill well.
+8. Produce a machine-readable God Team plan.
+9. Use t-SNE only as a visualization and sanity-check layer.
 
-```text
-EarlyBirdAI/
-├── data/
-├── docs/
-├── results/
-├── visualizations/
-├── main.py
-├── qdrant_ingest.py
-├── README.md
-└── SEMANTIC_MODEL.md
-```
-
-The repository must not contain stale documentation that refers to `load_qdrant.py` if the actual ingestion entry point
-is `qdrant_ingest.py`.
-
-## Core Decision
-
-Do not default to 4k embeddings.
-
-Use this baseline:
+## Plugin Name
 
 ```text
-embedding_model: text-embedding-3-small
-embedding_dimensions: 1536
-projection_dimensions: 16
-cluster_k: 11
-distance: cosine
-qdrant_collection: requirements_v1
-agent_owner: Amaterasu
-verifier: Ma'at
+Plugin: gods
+Primary command: /gods:review
+Evolution command: /gods:evolve
+Ranking command: /gods:rank
+Forge command: /gods:forge
 ```
 
-Use `text-embedding-3-large` only as a benchmark or quality ceiling:
+## Definitions
+
+A `god` is not a static subagent.
+
+A god is a named dynamic workflow force with:
+
+* a mythological identity
+* a semantic domain
+* a power score
+* a practical workflow responsibility
+* assigned skill axes
+* overlap penalties against other gods
+* evidence for why the name fits
+
+A `God Team` is the selected pantheon for one skill or task.
+
+A `pantheon size` is the number of gods selected for the workflow.
+
+## Dynamic Discovery Pipeline
 
 ```text
-text-embedding-3-large @ 1024 dimensions -> quality/cost test
-text-embedding-3-large @ 3072 dimensions -> quality ceiling
+skill markdown
+  -> workflow-axis extraction
+  -> candidate deity corpus
+  -> embeddings
+  -> role-fit scoring
+  -> pantheon-size search
+  -> cluster validation
+  -> t-SNE visualization
+  -> God Team selection
+  -> plugin command output
 ```
 
-The final choice must be based on retrieval quality, cluster stability, label quality, and validation evidence, not on
-larger dimension count alone.
+## Workflow Axis Extraction
 
-## Non-Goals
-
-Do not:
-
-* Treat 4k embeddings as a default.
-* Use compressed `d=16` projection vectors for production semantic retrieval.
-* Merge clustering, verification, and ingestion into one opaque script.
-* Invent unsupported semantic labels.
-* Preserve stale file names or stale README usage.
-* Stage, stash, or create extra worktrees.
-* Change behavior outside this semantic pipeline unless required by this file.
-
-## Agent Model
-
-The agent names are semantic roles, not implementation classes unless the codebase explicitly needs them.
-
-| Agent      | Responsibility                       | Must Do                                                                    | Must Not Do                            |
-|------------|--------------------------------------|----------------------------------------------------------------------------|----------------------------------------|
-| Amaterasu  | Illuminate hidden semantic structure | Discover clusters, contradictions, ambiguity, and routing needs            | Implement code changes                 |
-| Ma'at      | Verify truth and evidence            | Validate labels, cluster assignments, evidence, and confidence             | Accept unsupported labels              |
-| Odin       | Deep research                        | Resolve unclear external/domain meaning with cited evidence                | Research already-resolved local facts  |
-| Athena     | Refactor taxonomy and schema         | Merge, split, rename, and normalize semantic structures                    | Destroy validated behavior             |
-| Hephaestus | Implement approved changes           | Update scripts, schemas, payloads, docs, and validation paths              | Invent architecture beyond scope       |
-| Shiva      | Delete obsolete structure            | Remove stale docs, dead names, obsolete artifacts, and harmful duplication | Delete required source data            |
-| Hermes     | Route work                           | Select the next agent/tool based on task intent                            | Perform domain-specific work directly  |
-| Janus      | Boundary review                      | Review compatibility, migrations, API/schema transitions                   | Rewrite implementation unnecessarily   |
-| Saraswati  | Documentation and naming             | Produce clear README/docs/examples                                         | Hide uncertainty or unsupported claims |
-
-## Minimum Execution Pipeline
-
-Use the compact pipeline unless the repository requires the full role set:
+For each skill, extract core axes such as:
 
 ```text
-Amaterasu -> Ma'at -> Athena -> Hephaestus -> Shiva
+architecture_review
+complexity_deletion
+spaghetti_detection
+file_size_boundary
+type_boundary_cleanliness
+canonical_layer_ownership
+orchestration_atomicity
+output_prioritization
+approval_bar
+tone_enforcement
 ```
 
-Meaning:
+The extracted axes become the semantic target space.
 
-```text
-Discover -> Verify -> Refactor taxonomy -> Implement -> Delete obsolete artifacts
-```
+## Candidate God Profile
 
-## Required Pipeline Shape
+Each candidate god must be represented as structured text before embedding.
 
-The repository should express this flow clearly:
-
-```text
-raw requirements
-  -> bootstrap clustering experiment
-  -> cluster stability and visualization outputs
-  -> verified cluster artifact
-  -> production retrieval embeddings
-  -> Qdrant collection ingestion
-  -> dry-run/local validation path
-```
-
-The pipeline must keep these concerns separate:
-
-| Concern                      | Allowed Location                          |
-|------------------------------|-------------------------------------------|
-| Bootstrap clustering         | `main.py` or a cohesive clustering module |
-| Experiment rankings          | `results/experiment_results.csv`          |
-| Visualizations               | `visualizations/`                         |
-| Accepted cluster assignments | `results/qdrant_clusters.json`            |
-| Qdrant ingestion             | `qdrant_ingest.py`                        |
-| Semantic model documentation | `SEMANTIC_MODEL.md`                       |
-| User-facing usage docs       | `README.md` or `docs/`                    |
-
-## Entry Points
-
-Preferred command surface:
-
-```bash
-python3 main.py
-docker run -p 6333:6333 qdrant/qdrant
-python3 qdrant_ingest.py
-```
-
-Do not document `python3 load_qdrant.py` unless that file exists intentionally as a compatibility shim. Prefer one
-ingestion entry point: `qdrant_ingest.py`.
-
-## Embedding Policy
-
-### Experiment Layer
-
-The current bootstrap experiment may use low-dimensional projections such as `d=16` for stability analysis, clustering
-comparison, and visualization.
-
-This is acceptable only for experiment/projection use.
-
-### Retrieval Layer
-
-Production Qdrant retrieval must use real retrieval embeddings.
-
-Baseline:
-
-```text
-model: text-embedding-3-small
-dimensions: 1536
-```
-
-Optional benchmark:
-
-```text
-model: text-embedding-3-large
-dimensions: 1024
-```
-
-Optional ceiling:
-
-```text
-model: text-embedding-3-large
-dimensions: 3072
-```
-
-### Selection Criteria
-
-Pick the embedding configuration using:
-
-* retrieval precision@k
-* cluster stability across bootstrap runs
-* human label quality
-* duplicate and near-duplicate detection quality
-* cost and storage impact
-* reproducibility of results
-
-Do not pick by vector dimensionality alone.
-
-## Qdrant Model
-
-Use one collection for requirement points unless the payload schemas diverge enough to justify separate collections.
-
-Preferred collection:
-
-```text
-requirements_v1
-```
-
-Preferred distance:
-
-```text
-cosine
-```
-
-Use named vectors when multiple retrieval views are needed:
-
-```text
-semantic_text        -> required dense retrieval vector
-semantic_summary     -> optional later
-semantic_title       -> optional later
-lexical_sparse       -> optional later
-```
-
-Do not create multiple vector spaces prematurely. Add named vectors only when the code validates a real use case.
-
-## Required Qdrant Payload
-
-Each requirement point should include enough metadata to audit where the semantic label came from and how it was
-produced.
-
-Minimum payload:
+Example:
 
 ```json
 {
-  "req_id": "R1",
-  "text": "We guarantee breakfast delivery...",
-  "cluster_id": 4,
-  "cluster_label": "Product Catalog",
-  "source": "requirements.md",
-  "semantic_version": "amaterasu-v1",
-  "embedding_model": "text-embedding-3-small",
-  "embedding_dimensions": 1536,
-  "cluster_model": "bootstrap-kmeans-v1",
-  "cluster_k": 11,
-  "projection_dimensions": 16,
-  "agent_owner": "Amaterasu",
-  "verified_by": "Ma'at",
-  "status": "candidate",
-  "confidence": 0.0,
-  "evidence": []
+  "name": "Shiva",
+  "pantheon": "Hindu",
+  "domains": ["destruction", "transformation", "renewal", "cosmic dissolution"],
+  "workflow_affinity": ["delete complexity", "remove obsolete structure", "break false stability"],
+  "mythic_power": 0.98,
+  "name_usability": 0.90,
+  "notes": "Strong fit for destructive cleanup and renewal-oriented refactoring."
 }
 ```
 
-Allowed status values:
+## Scoring Model
+
+Each candidate god receives:
 
 ```text
-candidate
-verified
-rejected
-deprecated
+semantic_fit_score
+mythic_power_score
+coverage_score
+non_overlap_score
+name_usability_score
+evidence_score
 ```
 
-Recommended confidence range:
+Final score:
 
 ```text
-0.0 <= confidence <= 1.0
+final_score =
+  0.40 * semantic_fit_score
++ 0.20 * coverage_score
++ 0.15 * non_overlap_score
++ 0.15 * mythic_power_score
++ 0.05 * name_usability_score
++ 0.05 * evidence_score
 ```
 
-## Validation Rules
+## Pantheon Size Search
 
-Silhouette score is useful but insufficient.
-
-Use it to measure geometric separation, not semantic truth. A high score does not prove that labels are correct. A low
-or near-zero score may indicate overlapping clusters, weak feature representation, or an unsuitable cluster count.
-
-Validation must include:
-
-* silhouette score
-* bootstrap stability
-* cluster label review
-* source evidence review
-* retrieval precision@k
-* duplicate and near-duplicate checks
-* dry-run ingestion validation
-* README command validation
-
-## Expected Artifacts
-
-The pipeline may produce:
+Test team sizes:
 
 ```text
-results/experiment_results.csv
-results/qdrant_clusters.json
-visualizations/
+k = 3..12
 ```
 
-`results/experiment_results.csv` should rank clustering candidates by relevant metrics.
-
-`results/qdrant_clusters.json` should contain the accepted cluster assignments and labels that are safe for ingestion.
-
-Qdrant should store requirement points with named vectors and payload metadata.
-
-## Implementation Constraints
-
-Implementation must prefer:
-
-* small cohesive files
-* explicit schemas
-* typed data contracts where reasonable
-* deterministic outputs
-* readable CLI commands
-* minimal global state
-* dry-run support
-* clear failure messages
-* auditable metadata
-
-Implementation must avoid:
-
-* hidden side effects
-* stale script names
-* magic constants without documentation
-* unverified labels
-* overfitted cluster assumptions
-* unnecessary abstractions
-* mixing experiment vectors with production retrieval vectors
-
-## Required Agent Behavior
-
-### Amaterasu
-
-Inputs:
+For each `k`, compute:
 
 ```text
-raw requirements
-embedding/projection outputs
-cluster results
-existing labels
+team_coverage
+team_separation
+team_power
+team_overlap_penalty
+team_name_quality
+team_complexity_penalty
 ```
 
-Outputs:
+Select the smallest `k` whose score is within an acceptable margin of the best score.
+
+Rule:
 
 ```text
-candidate clusters
-ambiguity map
-contradiction list
-routing recommendation
+Prefer the smallest team that covers the workflow.
+Do not add gods for style if they do not reduce ambiguity or improve coverage.
 ```
 
-### Ma'at
+## t-SNE Role
 
-Inputs:
+t-SNE is visualization only.
+
+Use it to inspect whether gods, workflow axes, and selected teams form intuitive neighborhoods.
+
+Do not use t-SNE coordinates as final proof of power, rank, or correctness.
+
+## Cluster Validation
+
+Use silhouette score and bootstrap stability to estimate whether a team size is semantically clean.
+
+High silhouette means the selected roles are more separated.
+
+Near-zero silhouette means the team has overlapping or blurry responsibilities.
+
+Negative silhouette means the team assignment is likely wrong.
+
+## Expected Outputs
+
+The system should write:
 
 ```text
-candidate clusters
-source requirements
-cluster labels
-evidence fields
+results/god_team_scores.csv
+results/god_team.json
+visualizations/god_team_tsne.png
 ```
 
-Outputs:
+## `results/god_team.json`
 
-```text
-accepted labels
-rejected labels
-confidence values
-evidence notes
+```json
+{
+  "plugin": "gods",
+  "skill": "thermo-nuclear-code-quality-review",
+  "selected_command": "/gods:review",
+  "optimal_team_size": 7,
+  "selection_reason": "Smallest team with strong coverage, high role separation, and low overlap.",
+  "team": [
+    {
+      "god": "Athena",
+      "role": "strategic architecture judgment",
+      "semantic_fit_score": 0.0,
+      "mythic_power_score": 0.0,
+      "coverage_score": 0.0,
+      "non_overlap_score": 0.0,
+      "name_usability_score": 0.0,
+      "final_score": 0.0,
+      "assigned_axes": [],
+      "evidence": []
+    }
+  ],
+  "rejected_team_sizes": [],
+  "notes": []
+}
 ```
 
-### Athena
+## Example God Team for Thermo-Nuclear Code Quality Review
 
-Inputs:
+This is an initial hypothesis only. The final team must be selected by scoring.
 
 ```text
-verified clusters
-schema gaps
-naming inconsistencies
+Athena      -> strategic architecture judgment
+Shiva       -> deletion of accidental complexity
+Hephaestus  -> implementation structure and craft
+Ma'at       -> truth, evidence, approval bar
+Hermes      -> routing and orchestration clarity
+Janus       -> boundary and compatibility review
+Odin        -> deep investigation of hidden causes
 ```
 
-Outputs:
+Possible optional gods:
 
 ```text
-cleaner taxonomy
-merged/split clusters
-normalized payload schema
-```
-
-### Hephaestus
-
-Inputs:
-
-```text
-approved schema
-approved entry points
-approved docs
-```
-
-Outputs:
-
-```text
-updated scripts
-updated Qdrant collection logic
-updated payload indexes
-updated README usage
-```
-
-### Shiva
-
-Inputs:
-
-```text
-deprecated files
-stale names
-obsolete docs
-dead artifacts
-```
-
-Outputs:
-
-```text
-deleted stale references
-removed obsolete files
-clean repo state
+Apollo      -> clarity, diagnostic light, readable expression
+Thoth       -> documentation, records, precise language
+Ares        -> aggressive blocker enforcement
+Hades       -> dead-code and hidden-debt excavation
+Vishvakarma -> system craftsmanship and construction
 ```
 
 ## Acceptance Criteria
 
-The work is complete only when:
+A valid run must answer:
 
-1. `SEMANTIC_MODEL.md` exists in the repository root.
-2. README/docs point to the correct commands.
-3. There is no stale `load_qdrant.py` usage unless intentionally supported.
-4. Clustering/projection remains separate from production retrieval embeddings.
-5. Qdrant ingestion records explicit payload metadata.
-6. The baseline embedding config is `text-embedding-3-small` at 1536 dimensions.
-7. `text-embedding-3-large` is optional and benchmark-driven.
-8. The pipeline can run locally as far as possible without external API keys.
-9. If Qdrant or API keys are unavailable, a dry-run path reports what would happen.
-10. Validation evidence is summarized.
-11. No staged files, stashes, or extra worktrees are left behind.
+1. What is the optimal team size?
+2. Which gods were selected?
+3. Which skill axes does each god cover?
+4. Which gods were rejected and why?
+5. Which team sizes were rejected and why?
+6. Did t-SNE visually support the separation?
+7. Did silhouette/stability support the selected size?
+8. Is the selected team smaller than an equally powerful but redundant team?
 
-## Public References
+## Hard Rules
 
-These references justify public technical claims in this file:
+* Do not preselect the final pantheon manually.
+* Do not confuse gods with static subagents.
+* Do not use t-SNE as the final ranking metric.
+* Do not optimize only for mythological power.
+* Do not optimize only for semantic role fit.
+* Always balance semantic fit, workflow coverage, mythic power, role separation, and practical name usability.
 
-* OpenAI embeddings guide: https://developers.openai.com/api/docs/guides/embeddings
-* Qdrant vectors documentation: https://qdrant.tech/documentation/manage-data/vectors/
-* Qdrant collections documentation: https://qdrant.tech/documentation/manage-data/collections/
-* scikit-learn silhouette score
-  documentation: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.silhouette_score.html
+## Current Best Hypothesis For The Thermo-Nuclear Review Skill
+
+For the thermo-nuclear review skill, test `k=3..12`; the initial expected winner is probably 7 gods, not 5 or 9.
+
+Why 7?
+
+```text
+3 gods = too compressed; loses review specificity
+5 gods = workable, but likely merges architecture/type/orchestration too much
+7 gods = probably best balance
+9 gods = expressive, but likely redundant
+12 gods = too much overhead for one skill
+```
+
+Initial 7-god hypothesis:
+
+| God        | Workflow force          | Why it fits this skill                             |
+|------------|-------------------------|----------------------------------------------------|
+| Athena     | Architecture judgment   | Strategy, design quality, clean structure          |
+| Shiva      | Complexity deletion     | Delete accidental complexity and dead abstractions |
+| Hephaestus | Craft implementation    | Build maintainable structure, concrete fixes       |
+| Ma'at      | Approval bar / truth    | Evidence, correctness, strict judgment             |
+| Hermes     | Routing / orchestration | Detect wrong layer, wrong flow, sequencing issues  |
+| Janus      | Boundaries              | API, compatibility, type and module boundaries     |
+| Odin       | Deep investigation      | Hidden causes, non-obvious simplification paths    |
+
+This is a hypothesis, not a fixed team. The final team must be selected by the scoring run.

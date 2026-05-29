@@ -1,0 +1,8 @@
+{
+  "name": "gods",
+  "description": "Dynamic God Team discovery for workflow and code-review skills.",
+  "version": "0.1.0",
+  "author": {
+    "name": "ANcpLua"
+  }
+}
