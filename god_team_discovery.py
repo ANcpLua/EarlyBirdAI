@@ -495,7 +495,7 @@ def write_tsne_visualization(
         return "Matplotlib unavailable; t-SNE visualization was skipped."
 
     selected_names = {item.god.name for item in winner.selected}
-    selected_indexes = [index for index, god in enumerate(gods) if god.name in selected_names]
+    selected_indexes = [gods.index(item.god) for item in winner.selected]
     vectors = np.vstack([axis_vectors, god_vectors[selected_indexes]])
     labels = [axis.axis_id for axis in axes] + [gods[index].name for index in selected_indexes]
     kinds = ["axis"] * len(axes) + ["god"] * len(selected_indexes)
@@ -509,8 +509,33 @@ def write_tsne_visualization(
         perplexity=perplexity,
     ).fit_transform(vectors)
 
-    _, ax = plt.subplots(figsize=(12, 8))
-    for kind, marker, color in [("axis", "o", "#3b82f6"), ("god", "^", "#b91c1c")]:
+    _, ax = plt.subplots(figsize=(16, 10))
+
+    axis_points = {
+        axis.axis_id: points[index]
+        for index, axis in enumerate(axes)
+    }
+    god_points = {
+        item.god.name: points[len(axes) + index]
+        for index, item in enumerate(winner.selected)
+    }
+    for item in winner.selected:
+        god_point = god_points[item.god.name]
+        for axis in item.assigned_axes:
+            axis_point = axis_points[axis.axis_id]
+            ax.plot(
+                [god_point[0], axis_point[0]],
+                [god_point[1], axis_point[1]],
+                color="#991b1b",
+                linewidth=1.25,
+                alpha=0.22,
+                zorder=1,
+            )
+
+    for kind, marker, color, size, zorder in [
+        ("axis", "o", "#3b82f6", 80, 2),
+        ("god", "^", "#dc2626", 260, 3),
+    ]:
         indexes = [index for index, value in enumerate(kinds) if value == kind]
         ax.scatter(
             points[indexes, 0],
@@ -518,20 +543,44 @@ def write_tsne_visualization(
             marker=marker,
             color=color,
             label=kind,
-            s=90,
-            alpha=0.85,
+            s=size,
+            alpha=0.92,
+            edgecolors="#ffffff" if kind == "axis" else "#7f1d1d",
+            linewidths=0.8 if kind == "axis" else 1.4,
+            zorder=zorder,
         )
 
     for index, label in enumerate(labels):
-        ax.annotate(label, (points[index, 0], points[index, 1]), fontsize=8)
+        is_god = kinds[index] == "god"
+        ax.annotate(
+            label,
+            (points[index, 0], points[index, 1]),
+            xytext=(7, 7) if is_god else (3, 3),
+            textcoords="offset points",
+            fontsize=11 if is_god else 8,
+            fontweight="bold" if is_god else "normal",
+            color="#7f1d1d" if is_god else "#111827",
+            bbox=(
+                {
+                    "boxstyle": "round,pad=0.2",
+                    "facecolor": "#fee2e2",
+                    "edgecolor": "#b91c1c",
+                    "alpha": 0.9,
+                }
+                if is_god
+                else None
+            ),
+            zorder=4,
+        )
 
-    ax.set_title("God Team t-SNE visualization")
+    ax.set_title("God Team t-SNE visualization (selected gods highlighted)")
     ax.set_xlabel("t-SNE 1")
     ax.set_ylabel("t-SNE 2")
+    ax.margins(x=0.08, y=0.08)
     ax.grid(True, alpha=0.25)
     ax.legend()
     plt.tight_layout()
-    plt.savefig(path, dpi=150)
+    plt.savefig(path, dpi=150, bbox_inches="tight")
     plt.close()
     return f"t-SNE visualization written to {path}."
 
